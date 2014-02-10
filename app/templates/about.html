@@ -1,0 +1,39 @@
+{% extends "base.html"%}
+{% block content %}
+<!--Start Rest'O'Page-->
+<div class="row">
+  <div class="col-md-10 col-md-offset-1">
+    <div class="page-header">
+      <h1>About <small>What is this project?</small></h1>
+    </div>
+    <div class="container">
+      <p>My project aims to solve most of the problems associated with speed running timers and group races. This project has three major components: the website (speedruntimers.com) itself, a browser and stand-alone timer client, and a websockets server.</p>
+      <h4>The planned features for the website are:</h4>
+      <ul>
+        <li><p>A user account system with login</p></li>
+        <li><p>An interactive website</p></li>
+        <li><p>A split database where users can upload/download/modify splits</p></li>
+        <li><p>Ability to upload/export splits in the file formats of other timers</p></li>
+        <li><p>Organization of group races where spectators can also view current splits</p></li>
+      </ul>
+      <h4>The planned features for the local/web client:</h4>
+      <ul>
+        <li><p>All the functionalities of competing timers, such as hot keys, customizable pictures, basic timer feature, graph view, etc</p></li>
+        <li><p>Ability to sign in through website account and upload/download/modify splits directly from the client</p></li>
+        <li><p>Ability to use/export splits in the file formats of other timers</p></li>
+        <li><p>Modular graphics system with support for custom plugins and reorganization of layout</p></li>
+        <li><p>Ability to have a custom sound play when split</p></li>
+      </ul>
+      <h4>The planned features for the websockets server are:</h4>
+      <ul>
+        <li><p>Ability to have group races</p></li>
+        <li><p>Ability to see other members times</p></li>
+        <li><p>Ability for spectators to view the races</p></li>
+        <li><p>Possible integration with speedrunslive.com or twitch.tv.</p></li>
+      </ul>
+      <h4>The full word document can be found <a href="{{url_for('static', filename='files/progOutline.docx')}}">here.</a></h4>
+    </div>
+  </div>
+</div>
+<!--End Rest'O'Page-->
+{% endblock %}

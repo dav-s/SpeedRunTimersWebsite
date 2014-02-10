@@ -1,0 +1,12 @@
+{% extends "base.html"%}
+{% block content %}
+<!--Start Rest'O'Page-->
+<div class="row">
+  <div class="col-md-10 col-md-offset-1">
+    <h1>Brrooooo...</h1>
+    <h3>You don't have the authorization to this page!</h3>
+    <p>You might not be logged in or are snooping in a place you shouldn't! <a href="{{url_for('contact')}}">Conctact</a> me if you think this is a mistake.</p>
+  </div>
+</div>
+<!--End Rest'O'Page-->
+{% endblock %}

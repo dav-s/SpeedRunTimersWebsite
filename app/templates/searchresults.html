@@ -1,0 +1,16 @@
+{% extends "base.html"%}
+{% block content %}
+<!--Start Rest'O'Page-->
+<div class="row">
+  <div class="col-md-10 col-md-offset-1">
+    <h1>Search results for: {% if terms %} {{terms}} {% else %} Nothing {% endif %}</h1>
+    <hr>
+    {% if "Davis" in terms or "davis" in terms%}
+    <h1>OMG, YESSSSSS!</h1>
+    {% else %}
+    <h3 class="muted">None...</h3>
+    {% endif %}
+  </div>
+</div>
+<!--End Rest'O'Page-->
+{% endblock %}

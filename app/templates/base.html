@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  {% if title %}
+  <title>{{title}}</title>
+  {% else %}
+  <title>Speedrun Timers</title>
+  {% endif %}
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}"/>
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/bootstrap.min.css')}}"/>
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/pages.css')}}"/>
+  <script type="text/javascript" src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='js/datScrpt.js')}}"></script>
+  <script type="text/javascript">setURLVar("{{url_for('search', terms='')}}")</script>
+</head>
+<body>
+  <!--Start Navbar-->
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <a href="{{url_for('index')}}" class="navbar-brand">Speedrun Timers <sup><i>Alpha</i></sup></a>
+    <ul class="nav navbar-nav">
+      {% for navy in nBar %}
+      <li {% if navy.title == title %} class="active" {% endif %}><a href="{{url_for(navy.mName)}}">{{navy.title}}</a></li>
+      {% endfor %}
+    </ul>
+    <p class="navbar-text pull-right">
+      {% if "username" in session %}
+      
+      {% else %}
+      <a href="{{url_for('login')}}" class="navbar-link">Login</a> | <a href="{{url_for('signup')}}" class="navbar-link">Signup</a>
+      {% endif %}
+    </p>
+    <div class="col-md-2 navbar-form navbar-right">
+      <input type="search" id="sbar" class="form-control" placeholder="Search">
+    </div>
+  </nav>
+  <!--End Navbar-->
+
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <div class="flashies">
+    {% for message in messages %}
+    <div class="alert alert-info">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+  
+  {% block content %}
+  {% endblock %}
+
+  <!--Start Footer-->
+  <div class="container">
+    <hr>
+    <p class="text-muted">Davis Robertson. Copyright 2013.</p>
+  </div>
+  <!--End Footer-->
+</body>
+</html>
