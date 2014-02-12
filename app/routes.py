@@ -13,6 +13,13 @@ navigationBar = [{
 		"mName" : "contact"
 }]
 
+
+def flashErrors(form):
+	for name, errors in form.errors.iteritems():
+	  	for error in errors:
+			flash("%s"%error, "danger")
+
+
 @app.context_processor
 def injectGlobs():
 	return dict(nBar = navigationBar)
@@ -56,24 +63,27 @@ def about():
 def contact():
 	form = ContactForm()
 	if form.validate_on_submit():
-		flash("%s" % form.data)
-		return redirect(url_for("index"))
+		flash("<strong>Thank you %s!</strong> Your message was sent!"%form.name.data,"success")
+		return redirect(url_for("contact"))
+	flashErrors(form)
 	return render_template("contact.html", title="Contact", conForm=form)
 
 @app.route("/signup/", methods=["GET","POST"])
 def signup():
 	form = SignupForm()
 	if form.validate_on_submit():
-		flash("%s" % form.data)
+		flash("<strong>Thank you %s!</strong> Your were successfully signed up!"%form.uName.data,"success")
 		return redirect(url_for("index"))
+	flashErrors(form)
 	return render_template("signup.html", title="Signup", sigForm=form)
 
 @app.route("/login/", methods=["GET","POST"])
 def login():
 	form = LoginForm()
 	if form.validate_on_submit():
-		flash("%s" % form.data)
+		flash("%s, you have been signed in." % form.uName.data,"info")
 		return redirect(url_for("index"))
+	flashErrors(form)
 	return render_template("login.html", title="Login", logForm=form)
 
 @app.route("/getit/")
