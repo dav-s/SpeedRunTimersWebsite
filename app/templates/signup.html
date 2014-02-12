@@ -2,11 +2,55 @@
 {% block content %}
 <!--Start Rest'O'Page-->
 <div class="row">
-  <div class="col-md-10 col-md-offset-1">
-    <div class="col-md-8 col-md-offset-2">
-      <h1>Sign Up</h1>
-    </div>
-  </div>
+	<div class="col-md-6 col-md-offset-3">
+		<h1>Sign Up</h1>
+		<p class="pull-right">Already have an account? <a href="{{url_for('login')}}">Log in Now!</a></p>
+		<form class="form-horizontal col-md-offset-1 col-md-10" role="form" action="" method="POST" name="login">
+			{{sigForm.hidden_tag()}}
+			<div class="form-group">
+				{{sigForm.uName.label(class="col-md-2")}}
+				<div class="col-md-10">
+					{{sigForm.uName(placeholder="Enter username...",class="form-control")}}
+				</div>
+			</div>
+			<br>
+			<div class="form-group">
+				{{sigForm.eMail.label(class="col-md-2")}}
+				<div class="col-md-10">
+					{{sigForm.eMail(placeholder="Enter E-Mail...",class="form-control")}}
+				</div>
+			</div>
+			<div class="form-group">
+				{{sigForm.confMail.label(class="col-md-2")}}
+				<div class="col-md-10">
+					{{sigForm.confMail(placeholder="Confirm E-Mail...",class="form-control")}}
+				</div>
+			</div>
+			<br>
+			<div class="form-group">
+				{{sigForm.pWord.label(class="col-md-2")}}
+				<div class="col-md-10">
+					{{sigForm.pWord(placeholder="Enter password...",class="form-control")}}
+				</div>
+			</div>
+			<div class="form-group">
+				{{sigForm.confPass.label(class="col-md-2")}}
+				<div class="col-md-10">
+					{{sigForm.confPass(placeholder="Confirm password...",class="form-control")}}
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="checkbox col-md-6">
+					{{sigForm.agToS}} {{sigForm.agToS.label}}
+				</div>
+				<div class="pull-right">
+					<button type="submit" class="btn btn-primary">Sign up</button>
+				</div>
+			</div>
+			<br>
+		</form>
+	</div>
 </div>
 <!--End Rest'O'Page-->
 {% endblock %}

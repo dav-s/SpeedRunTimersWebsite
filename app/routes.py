@@ -1,5 +1,6 @@
 from app import app
-from flask import request, render_template, flash, abort
+from flask import request, render_template, flash, abort, redirect, url_for
+from forms import LoginForm, SignupForm, ContactForm
 
 navigationBar = [{
 		"title" : "Get it",
@@ -13,7 +14,7 @@ navigationBar = [{
 }]
 
 @app.context_processor
-def injectNav():
+def injectGlobs():
 	return dict(nBar = navigationBar)
 
 
@@ -42,27 +43,38 @@ def fofPage(e):
 def index():
 	return render_template("index.html")
 
-@app.route("/search/<terms>")
-def search(terms):
+@app.route("/search/")
+def search():
+	terms = request.args.get("terms","")
 	return render_template("searchresults.html", terms=terms, title="Search: "+terms+" | Speedruntimers")
 
 @app.route("/about/")
 def about():
 	return render_template("about.html", title="About")
 
-@app.route("/contact/")
+@app.route("/contact/", methods=["GET","POST"])
 def contact():
-	return render_template("contact.html", title="Contact")
+	form = ContactForm()
+	if form.validate_on_submit():
+		flash("%s" % form.data)
+		return redirect(url_for("index"))
+	return render_template("contact.html", title="Contact", conForm=form)
 
-@app.route("/signup/")
+@app.route("/signup/", methods=["GET","POST"])
 def signup():
-	return render_template("signup.html", title="Signup")
+	form = SignupForm()
+	if form.validate_on_submit():
+		flash("%s" % form.data)
+		return redirect(url_for("index"))
+	return render_template("signup.html", title="Signup", sigForm=form)
 
 @app.route("/login/", methods=["GET","POST"])
 def login():
-	if request.method == "POST":
-		return "Logged in"
-	return render_template("login.html", title="Login")
+	form = LoginForm()
+	if form.validate_on_submit():
+		flash("%s" % form.data)
+		return redirect(url_for("index"))
+	return render_template("login.html", title="Login", logForm=form)
 
 @app.route("/getit/")
 def getit():

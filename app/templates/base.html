@@ -12,7 +12,6 @@
   <script type="text/javascript" src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
   <script type="text/javascript" src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
   <script type="text/javascript" src="{{url_for('static', filename='js/datScrpt.js')}}"></script>
-  <script type="text/javascript">setURLVar("{{url_for('search', terms='')}}")</script>
 </head>
 <body>
   <!--Start Navbar-->
@@ -30,9 +29,11 @@
       <a href="{{url_for('login')}}" class="navbar-link">Login</a> | <a href="{{url_for('signup')}}" class="navbar-link">Signup</a>
       {% endif %}
     </p>
-    <div class="col-md-2 navbar-form navbar-right">
-      <input type="search" id="sbar" class="form-control" placeholder="Search">
-    </div>
+    <form class="col-md-2 navbar-form navbar-right" action="/search/" method="GET" role="search">
+      <div class="form-group">
+        <input type="search" id="sbar" class="form-control" placeholder="Search..." name="terms">
+      </div>
+    </form>
   </nav>
   <!--End Navbar-->
 
