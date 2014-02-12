@@ -7,6 +7,7 @@ This is a project I am working on for an Independent Studies project at my High 
 * Python 2.7
 * Flask
 * Flask-SQLAlchemy
+* Flask-WTForms
 
 ####Web Stuffs:
 * Bootstrap
