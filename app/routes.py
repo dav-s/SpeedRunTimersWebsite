@@ -30,19 +30,19 @@ def injectGlobs():
 def fooPage(e):
 	return render_template("errorpage.html", title="Unauthorized, Bro!",
 		mainMess="You don't have the authorization to this page!",
-		sideMess="You might not be logged in or are snooping in a place you shouldn't!")
+		sideMess="You might not be logged in or are snooping in a place you shouldn't!"), 401
 
 @app.errorhandler(403)
 def fotPage(e):
 	return render_template("errorpage.html", title="Forbidden, Bro!",
 		mainMess="You don't have permission to view this page!",
-		sideMess="Please don't snoop around!")
+		sideMess="Please don't snoop around!"), 403
 
 @app.errorhandler(404)
 def fofPage(e):
 	return render_template("errorpage.html", title="Not Found, Bro!",
 		mainMess="This page doesn't exist!",
-		sideMess="You might of typed in the wrong url, or just stupid.")
+		sideMess="You might of typed in the wrong url, or just stupid."), 404
 
 
 # Regular Routes
@@ -97,4 +97,3 @@ def download():
 @app.route("/webclient/")
 def webclient():
 	return render_template("webclient.html")
-
