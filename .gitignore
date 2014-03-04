@@ -1,3 +1,4 @@
 #SpeedRunTimers
 config.py
 *.py[co]
+*.db

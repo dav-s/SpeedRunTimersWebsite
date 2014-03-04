@@ -1,5 +1,5 @@
 from app import app
-from flask import request, render_template, flash, abort, redirect, url_for
+from flask import request, render_template, flash, abort, redirect, url_for, jsonify
 from forms import LoginForm, SignupForm, ContactForm
 
 navigationBar = [{
@@ -14,18 +14,18 @@ navigationBar = [{
 }]
 
 
-def flashErrors(form):
-	for name, errors in form.errors.iteritems():
-	  	for error in errors:
-			flash("%s"%error, "danger")
-
-
 @app.context_processor
 def injectGlobs():
 	return dict(nBar = navigationBar)
 
 
-# Error Pages
+# Errors
+
+def flashErrors(form):
+	for name, errors in form.errors.iteritems():	
+	  	for error in errors:
+			flash("%s"%error, "danger")
+
 @app.errorhandler(401)
 def fooPage(e):
 	return render_template("errorpage.html", title="Unauthorized, Bro!",
@@ -46,6 +46,7 @@ def fofPage(e):
 
 
 # Regular Routes
+
 @app.route("/")
 def index():
 	return render_template("index.html")
@@ -97,3 +98,10 @@ def download():
 @app.route("/webclient/")
 def webclient():
 	return render_template("webclient.html")
+
+
+# APIs
+
+@app.route("/api/")
+def apiHome():
+	return "Much Wow, Many API"
