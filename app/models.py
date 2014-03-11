@@ -32,3 +32,4 @@ class Game(db.Model):
 
 	def __repr__(self):
 		return "<Game %r>" % self.name
+
