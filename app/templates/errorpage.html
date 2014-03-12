@@ -1,14 +1,12 @@
 {% extends "base.html"%}
 {% block content %}
-<!--Start Rest'O'Page-->
 <div class="row">
   <div class="col-md-10 col-md-offset-1">
     <h1>Brrooooo...</h1>
     <div class="alert alert-danger">
     	<h3>{{mainMess}}</h3>
     </div>
-    <p>{{sideMess}}<a href="{{url_for('contact')}}">Conctact</a> me if you think this is a mistake.</p>
+    <p>{{sideMess}}<a href="{{url_for('contact')}}">Contact</a> me if you think this is a mistake.</p>
   </div>
 </div>
-<!--End Rest'O'Page-->
 {% endblock %}

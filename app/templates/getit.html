@@ -1,6 +1,5 @@
 {% extends "base.html"%}
 {% block content %}
-<!--Start Rest'O'Page-->
 <div class="row">
   <div class="col-md-10 col-md-offset-1">
     <div class="jumbotron"><div class="container">
@@ -9,14 +8,13 @@
       <div class="row">
         <div class="col-md-6">
           <p><a class="btn btn-primary btn-lg" href="{{url_for('webclient')}}">Web Version <small>(Try it!)</small></a></p>
-          <p>This web-version utilizes HTML5's websockets capabilities to create this real-time browser-based application. <small>Note: If you have an updated modern browser this should work.</small></p>
+          <p>This web-version utilizes HTML5's WebSockets capabilities to create this real-time browser-based application. <small>Note: If you have an updated modern browser this should work.</small></p>
         </div>
         <div class="col-md-6"><p><a class="btn btn-primary btn-lg" href="{{url_for('download')}}">Download</a></p>
-          <p>This a java based desktop application that can be used for offline use as well. <small>Note: This should work on all systems that can run java.</small></p>
+          <p>This a python based desktop application that can be used for offline use as well. <small>Note: Uses Python</small></p>
         </div>
       </div>
     </div></div>
   </div>
 </div>
-<!--End Rest'O'Page-->
 {% endblock %}
