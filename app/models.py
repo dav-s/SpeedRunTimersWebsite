@@ -6,18 +6,18 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(32), unique=True)
     email = db.Column(db.String(254), unique=True)
-    passwordHash = db.Column(db.String(160))
+    password_hash = db.Column(db.String(160))
 
-    def __init__(self, uName, eMail, pWord):
-        self.username = uName
-        self.email = eMail
-        self.setPass(pWord)
+    def __init__(self, username, email, password):
+        self.username = username
+        self.email = email
+        self.set_password(password)
 
-    def setPass(self, pWord):
-        self.passwordHash = generate_password_hash(pWord)
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
 
-    def checkPass(self, pWord):
-        return check_password_hash(self.passwordHash, pWord)
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
         return "<User %r>" % self.username

@@ -1,6 +1,7 @@
 from app import app
-from flask import request, render_template, flash, abort, redirect, url_for, jsonify
+from flask import request, render_template, flash, redirect, url_for, jsonify
 from forms import LoginForm, SignupForm, ContactForm
+from models import User
 
 navigationBar = [{
                  "title": "Get it",
@@ -15,34 +16,34 @@ navigationBar = [{
 
 
 @app.context_processor
-def injectGlobs():
+def inject_global_variables():
     return dict(nBar=navigationBar)
 
 
 # Errors
 
-def flashErrors(form):
+def flash_errors(form):
     for name, errors in form.errors.iteritems():
         for error in errors:
             flash("%s" % error, "danger")
 
 
 @app.errorhandler(401)
-def fooPage(e):
+def foo_page(e):
     return render_template("errorpage.html", title="Unauthorized, Bro!",
                            mainMess="You don't have the authorization to this page!",
                            sideMess="You might not be logged in or are snooping in a place you shouldn't!"), 401
 
 
 @app.errorhandler(403)
-def fotPage(e):
+def fot_age(e):
     return render_template("errorpage.html", title="Forbidden, Bro!",
                            mainMess="You don't have permission to view this page!",
                            sideMess="Please don't snoop around!"), 403
 
 
 @app.errorhandler(404)
-def fofPage(e):
+def fof_page(e):
     return render_template("errorpage.html", title="Not Found, Bro!",
                            mainMess="This page doesn't exist!",
                            sideMess="You might of typed in the wrong url, or just stupid."), 404
@@ -72,7 +73,7 @@ def contact():
     if form.validate_on_submit():
         flash("<strong>Thank you %s!</strong> Your message was sent!" % form.name.data, "success")
         return redirect(url_for("contact"))
-    flashErrors(form)
+    flash_errors(form)
     return render_template("contact.html", title="Contact", conForm=form)
 
 
@@ -82,7 +83,7 @@ def signup():
     if form.validate_on_submit():
         flash("<strong>Thank you %s!</strong> Your were successfully signed up!" % form.uName.data, "success")
         return redirect(url_for("index"))
-    flashErrors(form)
+    flash_errors(form)
     return render_template("signup.html", title="Signup", sigForm=form)
 
 
@@ -92,7 +93,7 @@ def login():
     if form.validate_on_submit():
         flash("%s, you have been signed in." % form.uName.data, "info")
         return redirect(url_for("index"))
-    flashErrors(form)
+    flash_errors(form)
     return render_template("login.html", title="Login", logForm=form)
 
 
@@ -101,7 +102,7 @@ def getit():
     return render_template("getit.html", title="Get it")
 
 
-@app.route("/dowload/")
+@app.route("/download/")
 def download():
     return render_template("download.html", title="Download")
 
@@ -111,8 +112,16 @@ def webclient():
     return render_template("webclient.html")
 
 
+
 # APIs
 
 @app.route("/api/")
-def apiHome():
+def api_home():
     return "Much Wow, Many API"
+
+@app.route("/api/user_by_id/<int:uid>")
+def get_user(uid):
+    uq = User.query.get(uid)
+    if uq:
+        return jsonify(id=uq.id, username=uq.username)
+    return "No User with that id was found."
