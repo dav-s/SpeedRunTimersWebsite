@@ -10,6 +10,7 @@ More information can be found on [this word document.](https://github.com/EpicDa
 * Flask
 * Flask-SQLAlchemy
 * Flask-WTForms
+* Flask-Login
 
 ####Web Stuffs:
 * Bootstrap
