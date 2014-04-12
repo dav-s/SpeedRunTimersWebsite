@@ -1,7 +1,9 @@
-from app import app
-from flask import request, render_template, flash, redirect, url_for, jsonify
+from app import app, lm, db
+from flask import request, render_template, flash, redirect, url_for, jsonify, g, session, Markup
+from flask.ext.login import login_user, logout_user, current_user, login_required
 from forms import LoginForm, SignupForm, ContactForm
 from models import User
+from sqlalchemy import func
 
 navigationBar = [{
                  "title": "Get it",
@@ -19,6 +21,16 @@ navigationBar = [{
 def inject_global_variables():
     return dict(nBar=navigationBar)
 
+
+# Before Hand
+
+@lm.user_loader
+def load_user(id):
+    return User.query.get(int(id))
+
+@app.before_request
+def before_request():
+    g.user = current_user
 
 # Errors
 
@@ -71,7 +83,7 @@ def about():
 def contact():
     form = ContactForm()
     if form.validate_on_submit():
-        flash("<strong>Thank you %s!</strong> Your message was sent!" % form.name.data, "success")
+        flash(Markup("<strong>Thank you %s!</strong> Your message was sent!" % form.name.data), "success")
         return redirect(url_for("contact"))
     flash_errors(form)
     return render_template("contact.html", title="Contact", conForm=form)
@@ -79,23 +91,48 @@ def contact():
 
 @app.route("/signup/", methods=["GET", "POST"])
 def signup():
+    if g.user is not None and g.user.is_authenticated():
+        flash("You are already logged in!", "info")
+        return redirect(url_for("index"))
     form = SignupForm()
     if form.validate_on_submit():
-        flash("<strong>Thank you %s!</strong> Your were successfully signed up!" % form.uName.data, "success")
-        return redirect(url_for("index"))
+        if not User.query.filter(func.lower(User.username) == func.lower(form.uName.data)).first():
+            addedUser = User(form.uName.data, form.eMail.data, form.pWord.data)
+            db.session.add(addedUser)
+            db.session.commit()
+            login_user(addedUser)
+            flash(Markup("<strong>Thank you %s!</strong> Your were successfully signed up!" % form.uName.data), "success")
+            return redirect(url_for("index"))
+        flash("That username is already taken!", "danger")
+        return render_template("signup.html", title="Signup", sigForm=form)
     flash_errors(form)
     return render_template("signup.html", title="Signup", sigForm=form)
 
 
 @app.route("/login/", methods=["GET", "POST"])
 def login():
+    if g.user is not None and g.user.is_authenticated():
+        flash("You are already logged in!", "info")
+        return redirect(url_for("index"))
     form = LoginForm()
     if form.validate_on_submit():
-        flash("%s, you have been signed in." % form.uName.data, "info")
-        return redirect(url_for("index"))
+        attempUser = User.query.filter(func.lower(User.username) == func.lower(form.uName.data)).first()
+        if attempUser and attempUser.check_password(form.pWord.data):
+            session["remember_me"] = form.remMe.data
+            login_user(attempUser, remember=form.remMe.data)
+            flash("%s, you have been signed in." % attempUser.username, "info")
+            return redirect(url_for("index"))
+        flash("You have entered the wrong username and/or password.", "danger")
+        return render_template("login.html", title="Login", logForm=form)
     flash_errors(form)
     return render_template("login.html", title="Login", logForm=form)
 
+
+@app.route("/logout/")
+def logout():
+    logout_user()
+    flash("You have been logged out.", "info")
+    return redirect(url_for("index"))
 
 @app.route("/getit/")
 def getit():

@@ -1,3 +1,7 @@
 body{
   padding-top: 50px;
 }
+
+#flashies .alert {
+    margin-bottom: 0px;
+}

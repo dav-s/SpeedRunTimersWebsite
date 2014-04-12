@@ -19,12 +19,12 @@
     <a href="{{url_for('index')}}" class="navbar-brand">Speedrun Timers <sup><i>Alpha</i></sup></a>
     <ul class="nav navbar-nav">
       {% for navy in nBar %}
-      <li {% if navy.title == title %} class="active" {% endif %}><a href="{{url_for(navy.mName)}}">{{navy.title}}</a></li>
+      <li   {% if navy.title == title %} class="active" {% endif %}><a href="{{url_for(navy.mName)}}">{{navy.title}}</a></li>
       {% endfor %}
     </ul>
     <p class="navbar-text pull-right">
-      {% if "username" in session %}
-      
+      {% if g.user.is_authenticated() %}
+      Logged in as {{ g.user.username }}. | <a href="{{url_for('logout')}}" class="navbar-link">Logout</a>
       {% else %}
       <a href="{{url_for('login')}}" class="navbar-link">Login</a> | <a href="{{url_for('signup')}}" class="navbar-link">Signup</a>
       {% endif %}
@@ -39,7 +39,7 @@
 
   {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
-  <div class="flashies">
+  <div id="flashies">
     {% for category, message in messages %}
     <div class="alert alert-{{ category }}">{{ message }}</div>
     {% endfor %}
@@ -49,6 +49,7 @@
   
   {% block content %}
   {% endblock %}
+
 
   <!--Start Footer-->
   <div class="container">
