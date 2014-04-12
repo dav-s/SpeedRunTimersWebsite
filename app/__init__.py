@@ -5,7 +5,7 @@ from flask.ext.login import LoginManager
 app = Flask(__name__)
 
 try:
-    app.config.from_object('config') # config.py is supposed to be put in root of application
+    app.config.from_object('config')  # config.py is supposed to be put in root of application
 except Exception:
     pass
 

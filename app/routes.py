@@ -71,7 +71,12 @@ def index():
 @app.route("/search/")
 def search():
     terms = request.args.get("terms", "")
-    return render_template("searchresults.html", terms=terms, title="Search: " + terms + " | Speedruntimers")
+    search_user = User.query.filter(func.lower(User.username) == func.lower(terms)).first()
+    return render_template("searchresults.html",
+                           terms=terms,
+                           title="Search: " + terms + " | Speedruntimers",
+                           user=search_user,
+                           repositories=None)
 
 
 @app.route("/about/")
@@ -83,7 +88,7 @@ def about():
 def contact():
     form = ContactForm()
     if form.validate_on_submit():
-        flash(Markup("<strong>Thank you %s!</strong> Your message was sent!" % form.name.data), "success")
+        flash(Markup("<strong>Thank you %s!</strong> Your message was sent!") % form.name.data, "success")
         return redirect(url_for("contact"))
     flash_errors(form)
     return render_template("contact.html", title="Contact", conForm=form)
@@ -101,7 +106,7 @@ def signup():
             db.session.add(addedUser)
             db.session.commit()
             login_user(addedUser)
-            flash(Markup("<strong>Thank you %s!</strong> Your were successfully signed up!" % form.uName.data), "success")
+            flash(Markup("<strong>Thank you %s!</strong> Your were successfully signed up!")  % form.uName.data, "success")
             return redirect(url_for("index"))
         flash("That username is already taken!", "danger")
         return render_template("signup.html", title="Signup", sigForm=form)
@@ -149,6 +154,15 @@ def webclient():
     return render_template("webclient.html")
 
 
+# User Pages
+
+@app.route("/u/<int:uid>/")
+def user_page(uid):
+    uq = User.query.get(uid)
+    if uq:
+        return render_template("user.html", title=uq.username, user=uq)
+    return render_template("user.html", title="User not found.")
+
 
 # APIs
 
@@ -156,7 +170,7 @@ def webclient():
 def api_home():
     return "Much Wow, Many API"
 
-@app.route("/api/user_by_id/<int:uid>")
+@app.route("/api/user_by_id/<int:uid>/")
 def get_user(uid):
     uq = User.query.get(uid)
     if uq:
