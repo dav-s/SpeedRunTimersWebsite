@@ -61,6 +61,13 @@ def fof_page(e):
                            sideMess="You might of typed in the wrong url, or just stupid."), 404
 
 
+@app.errorhandler(500)
+def server_error_page(e):
+    return render_template("errorpage.html", title="Whoops!",
+                           mainMess="There was a server error!",
+                           sideMess="This is a problem on our part. We will attend to this shortly..."), 404
+
+
 # Regular Routes
 
 @app.route("/")
