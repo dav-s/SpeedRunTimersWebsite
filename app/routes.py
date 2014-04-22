@@ -167,8 +167,24 @@ def webclient():
 def user_page(uid):
     uq = User.query.get(uid)
     if uq:
+        if g.user is not None and g.user.is_authenticated() and uid == g.user.id:
+            return render_template("user.html", title=uq.username, user=uq, userspage=True)
         return render_template("user.html", title=uq.username, user=uq)
-    return render_template("user.html", title="User not found.")
+    return render_template("errorpage.html", title="User not found.",
+                           mainMess="A user with the id of %s was not found." % uid,
+                           sideMess="Please make sure the link is right.")
+
+@app.route("/u/")
+def users():
+    return render_template("users.html", title="All users",
+                    users=User.query.all())
+
+
+#Split Pages
+
+@app.route("/split/create/")
+def splitcreate():
+    return render_template("createsplit.html", title="Create splits")
 
 
 # APIs

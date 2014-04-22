@@ -2,14 +2,12 @@
 {% block content %}
 <div class="row">
     <div class="col-md-10 col-md-offset-1">
-        {% if user %}
         <h1>{{ user.username }}</h1>
         <hr>
         <h3>Email: {{ user.email }}</h3>
-        {% else %}
-        <h1>User not found!</h1>
-        <h3>A user with that ID was not found! If you think this is a mistake please <a href="{{ url_for('contact') }}">Contact Me</a>.</h3>
-        {% endif %}
+         {% if userspage %}
+         <p class="text-muted">This is your page</p>
+         {% endif %}
     </div>
 </div>
 {% endblock %}
