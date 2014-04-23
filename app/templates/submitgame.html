@@ -1,0 +1,21 @@
+{% extends "base.html"%}
+{% block content %}
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <h1>Submit a game</h1>
+        <br>
+        <form class="form-horizontal col-md-offset-1 col-md-10" role="form" action="" method="POST" name="login">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.name.label(class="col-md-2")}}
+                <div class="col-md-10">
+                    {{ form.name(placeholder="Enter game name...",class="form-control") }}
+                </div>
+            </div>
+            <div class="pull-right">
+                <button type="submit" class="btn btn-primary">Submit Game</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

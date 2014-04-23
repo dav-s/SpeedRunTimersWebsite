@@ -1,8 +1,8 @@
 from app import app, lm, db
 from flask import request, render_template, flash, redirect, url_for, jsonify, g, session, Markup
-from flask.ext.login import login_user, logout_user, current_user, login_required
-from forms import LoginForm, SignupForm, ContactForm
-from models import User
+from flask.ext.login import login_user, logout_user, current_user
+from forms import LoginForm, SignupForm, ContactForm, GameSubmitForm
+from models import User, Game, Split
 from sqlalchemy import func
 
 navigationBar = [{
@@ -68,6 +68,13 @@ def server_error_page(e):
                            sideMess="This is a problem on our part. We will attend to this shortly..."), 404
 
 
+def modCaseInsSearch(mod, modattr, term, fun=None):
+    if not fun:
+        return mod.query.filter(func.lower(modattr) == func.lower(term))
+    return mod.query.filter(fun(mod, func.lower(modattr), func.lower(term)))
+
+
+
 # Regular Routes
 
 @app.route("/")
@@ -78,12 +85,14 @@ def index():
 @app.route("/search/")
 def search():
     terms = request.args.get("terms", "")
-    search_user = User.query.filter(func.lower(User.username) == func.lower(terms)).first()
+    search_user = modCaseInsSearch(User, User.username, terms).first()
+    games = modCaseInsSearch(Game, Game.name, terms).all()
     return render_template("searchresults.html",
                            terms=terms,
-                           title="Search: " + terms + " | Speedruntimers",
+                           title="Search: " + terms,
                            user=search_user,
-                           repositories=None)
+                           repositories=None,
+                           games=games)
 
 
 @app.route("/about/")
@@ -161,7 +170,50 @@ def webclient():
     return render_template("webclient.html")
 
 
+@app.route("/g/")
+def games():
+    return render_template("games.html", title="Games", games=Game.query.all())
+
+@app.route("/g/<int:gid>/")
+def game_page(gid):
+    gq = Game.query.get(gid)
+    if gq:
+        return render_template("game.html", title=gq.name, game=gq)
+    return render_template("errorpage.html", title="Game not found.",
+                           mainMess="A game with the id of %s was not found" % gid,
+                           sideMess="Please make sure the link is valid.")
+
+@app.route("/g/submit/", methods=["GET", "POST"])
+def game_submit():
+    form = GameSubmitForm()
+    if form.validate_on_submit():
+        if Game.query.filter(func.lower(Game.name) == func.lower(form.name.data)).first():
+            flash("This game has already been submitted.", "danger")
+            return render_template("submitgame.html", title="Game Submission", form=form)
+        gameToAdd = Game(form.name.data)
+        db.session.add(gameToAdd)
+        db.session.commit()
+        flash("The game was successfully submitted!","success")
+        return redirect(url_for("game_submit"))
+    return render_template("submitgame.html", title="Game Submission", form=form)
+
+
+@app.route("/s/<int:sid>/")
+def split_page(sid):
+    sq = Split.query.get(sid)
+    if sq:
+        return render_template("game.html", title=sq.name, split=sq)
+    return render_template("errorpage.html", title="Split not found.",
+                           mainMess="A split with the id of %s was not found" % sid,
+                           sideMess="Please make sure the link is valid.")
+
+
 # User Pages
+
+@app.route("/u/")
+def users():
+    return render_template("users.html", title="All users",
+                           users=User.query.all())
 
 @app.route("/u/<int:uid>/")
 def user_page(uid):
@@ -172,12 +224,8 @@ def user_page(uid):
         return render_template("user.html", title=uq.username, user=uq)
     return render_template("errorpage.html", title="User not found.",
                            mainMess="A user with the id of %s was not found." % uid,
-                           sideMess="Please make sure the link is right.")
+                           sideMess="Please make sure the link is valid.")
 
-@app.route("/u/")
-def users():
-    return render_template("users.html", title="All users",
-                    users=User.query.all())
 
 
 #Split Pages

@@ -1,0 +1,12 @@
+{% extends "base.html"%}
+{% block content %}
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+        <h1>Games</h1>
+        <hr>
+        {% for game in games %}
+        <h4><a href="{{ url_for('game_page',gid=game.id) }}">{{ game.name }}</a></h4>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

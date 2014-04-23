@@ -46,3 +46,21 @@ class Game(db.Model):
     def __repr__(self):
         return "<Game %r>" % self.name
 
+
+class Split(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80))
+
+    game_id = db.Column(db.Integer, db.ForeignKey("game.id"))
+    game = db.relationship("Game",
+                           backref=db.backref("splits", lazy="dynamic"))
+
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    user = db.relationship("User",
+                           backref=db.backref("splits", lazy="dynamic"))
+
+    def __init__(self, title, game, user):
+        self.title = title
+        self.game = game
+        self.user = user
+

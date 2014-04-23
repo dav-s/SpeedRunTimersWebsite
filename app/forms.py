@@ -52,3 +52,10 @@ class ContactForm(Form):
         validators.Length(max=140, message="Title must be less than 140 characters.")])
     message = TextAreaField("Message", validators=[
         validators.Required(message="You must have a message.")])
+
+
+class GameSubmitForm(Form):
+    name = TextAreaField("Game Title", validators=[
+        validators.Required(),
+        validators.Length(min=1,max=80, message="The game title must be between 1 and 80 characters.")
+    ])
