@@ -5,16 +5,12 @@ from forms import LoginForm, SignupForm, ContactForm, GameSubmitForm
 from models import User, Game, Split
 from sqlalchemy import func
 
-navigationBar = [{
-                 "title": "Get it",
-                 "mName": "getit"
-                 }, {
-                 "title": "About",
-                 "mName": "about"
-                 }, {
-                 "title": "Contact",
-                 "mName": "contact"
-                 }]
+navigationBar = [{"title": "Get it",  "mName": "getit"},
+                 {"title": "About",   "mName": "about"},
+                 {"title": "Contact", "mName": "contact"},
+                 {"title": "Users",   "mName": "users"},
+                 {"title": "Splits",  "mName": "splits"},
+                 {"title": "Games",   "mName": "games"}]
 
 
 @app.context_processor
@@ -197,6 +193,10 @@ def game_submit():
         return redirect(url_for("game_submit"))
     return render_template("submitgame.html", title="Game Submission", form=form)
 
+
+@app.route("/s/")
+def splits():
+    return render_template("splits.html", title="Splits", splits=Split.query.all())
 
 @app.route("/s/<int:sid>/")
 def split_page(sid):

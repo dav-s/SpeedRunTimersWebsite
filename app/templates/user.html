@@ -4,13 +4,12 @@
     <div class="col-md-10 col-md-offset-1">
         <h1>{{ user.username }}</h1>
         <hr>
-        <h3>Email: {{ user.email }}</h3>
         {% if userspage %}
         <p class="text-muted">This is your page</p>
-        <hr>
-        <h3>Splits:</h3>
         {% endif %}
-        {% if len(user.splits.all())>0 %}
+        <h3>Email: {{ user.email }}</h3>
+        <h3>Splits:</h3>
+        {% if user.splits.all()|length >0 %}
             {% for splits in user.splits.all() %}
                 <p><a>{{ splits.title }}</a></p>
             {% endfor %}
