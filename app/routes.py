@@ -1,7 +1,7 @@
 from app import app, lm, db
 from flask import request, render_template, flash, redirect, url_for, jsonify, g, session, Markup
 from flask.ext.login import login_user, logout_user, current_user
-from forms import LoginForm, SignupForm, ContactForm, GameSubmitForm
+from forms import LoginForm, SignupForm, ContactForm, GameSubmitForm, SplitSubmitPage
 from models import User, Game, Split
 from sqlalchemy import func
 
@@ -194,25 +194,11 @@ def game_submit():
     return render_template("submitgame.html", title="Game Submission", form=form)
 
 
-@app.route("/s/")
-def splits():
-    return render_template("splits.html", title="Splits", splits=Split.query.all())
-
-@app.route("/s/<int:sid>/")
-def split_page(sid):
-    sq = Split.query.get(sid)
-    if sq:
-        return render_template("game.html", title=sq.name, split=sq)
-    return render_template("errorpage.html", title="Split not found.",
-                           mainMess="A split with the id of %s was not found" % sid,
-                           sideMess="Please make sure the link is valid.")
-
-
 # User Pages
 
 @app.route("/u/")
 def users():
-    return render_template("users.html", title="All users",
+    return render_template("users.html", title="Users",
                            users=User.query.all())
 
 @app.route("/u/<int:uid>/")
@@ -230,9 +216,27 @@ def user_page(uid):
 
 #Split Pages
 
-@app.route("/split/create/")
-def splitcreate():
-    return render_template("createsplit.html", title="Create splits")
+@app.route("/s/")
+def splits():
+    return render_template("splits.html", title="Splits", splits=Split.query.all())
+
+
+@app.route("/s/<int:sid>/")
+def split_page(sid):
+    sq = Split.query.get(sid)
+    if sq:
+        return render_template("game.html", title=sq.name, split=sq)
+    return render_template("errorpage.html", title="Split not found.",
+                           mainMess="A split with the id of %s was not found" % sid,
+                           sideMess="Please make sure the link is valid.")
+
+
+@app.route("/s/create/")
+def split_create():
+    form = SplitSubmitPage()
+    if form.validate_on_submit():
+        pass #NEED TO IMPLEMEMNT
+    return render_template("createsplit.html", title="Create splits", form=form)
 
 
 # APIs

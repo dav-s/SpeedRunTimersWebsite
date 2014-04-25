@@ -59,8 +59,8 @@ class Split(db.Model):
     user = db.relationship("User",
                            backref=db.backref("splits", lazy="dynamic"))
 
-    def __init__(self, title, game, user):
-        self.title = title
+    def __init__(self, name, game, user):
+        self.name = name
         self.game = game
         self.user = user
 

@@ -3,9 +3,10 @@
 <div class="row">
     <div class="col-md-10 col-md-offset-1">
         <h1>Users</h1>
+        <h4>Here are all the current users.</h4>
         <hr>
         {% for user in users %}
-            <h3><a href="{{ url_for('user_page',uid=user.id) }}">{{ user.username }}</a></h3>
+            <h4><a href="{{ url_for('user_page',uid=user.id) }}">{{ user.username }}</a></h4>
         {% endfor %}
     </div>
 </div>

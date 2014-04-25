@@ -55,7 +55,16 @@ class ContactForm(Form):
 
 
 class GameSubmitForm(Form):
-    name = TextAreaField("Game Title", validators=[
+    name = TextField("Game Title", validators=[
         validators.Required(),
-        validators.Length(min=1,max=80, message="The game title must be between 1 and 80 characters.")
+        validators.Length(min=1, max=80, message="The game title must be between 1 and 80 characters.")
+    ])
+
+
+class SplitSubmitPage(Form):
+    name = TextField("Name:", validators=[
+        validators.Required()
+    ])
+    game = TextField("Game:", validators=[
+        validators.Required()
     ])
