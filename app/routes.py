@@ -189,8 +189,9 @@ def game_submit():
         gameToAdd = Game(form.name.data)
         db.session.add(gameToAdd)
         db.session.commit()
-        flash("The game was successfully submitted!","success")
+        flash("The game was successfully submitted!", "success")
         return redirect(url_for("game_submit"))
+    flash_errors(form)
     return render_template("submitgame.html", title="Game Submission", form=form)
 
 
@@ -231,12 +232,18 @@ def split_page(sid):
                            sideMess="Please make sure the link is valid.")
 
 
-@app.route("/s/create/")
+@app.route("/s/create/", methods=["GET","POST"])
 def split_create():
-    form = SplitSubmitPage()
-    if form.validate_on_submit():
-        pass #NEED TO IMPLEMEMNT
-    return render_template("createsplit.html", title="Create splits", form=form)
+    if g.user is not None and g.user.is_authenticated():
+        form = SplitSubmitPage()
+        if form.validate_on_submit():
+            flash("%s created a split for %s called %s." % (g.user.username, form.game.data, form.name.data), "info")
+            return redirect(url_for("index"))
+        flash_errors(form)
+        return render_template("createsplit.html", title="Create splits", form=form)
+    flash(Markup('You need to be logged in to create splits. Sign up <a href="%s">here</a>.' % url_for("signup")), "danger")
+    return redirect(url_for("index"))
+
 
 
 # APIs

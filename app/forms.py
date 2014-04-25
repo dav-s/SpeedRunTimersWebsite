@@ -63,8 +63,8 @@ class GameSubmitForm(Form):
 
 class SplitSubmitPage(Form):
     name = TextField("Name:", validators=[
-        validators.Required()
+        validators.Required(message="You must provide a name for your split.")
     ])
     game = TextField("Game:", validators=[
-        validators.Required()
+        validators.Required(message="You must provide a game name.")
     ])
