@@ -10,9 +10,11 @@
         <h3>Email: {{ user.email }}</h3>
         <h3>Splits:</h3>
         {% if user.splits.all()|length >0 %}
+            <ul>
             {% for splits in user.splits.all() %}
-                <p><a>{{ splits.title }}</a></p>
+                <li><a href="{{ url_for('split_page', sid=splits.id) }}">{{ splits.name }}</a></li>
             {% endfor %}
+            </ul>
         {% else %}
             <p>None</p>
         {% endif %}

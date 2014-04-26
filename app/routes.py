@@ -64,7 +64,7 @@ def server_error_page(e):
                            sideMess="This is a problem on our part. We will attend to this shortly..."), 404
 
 
-def modCaseInsSearch(mod, modattr, term, fun=None):
+def mod_cs_search(mod, modattr, term, fun=None):
     if not fun:
         return mod.query.filter(func.lower(modattr) == func.lower(term))
     return mod.query.filter(fun(mod, func.lower(modattr), func.lower(term)))
@@ -81,8 +81,8 @@ def index():
 @app.route("/search/")
 def search():
     terms = request.args.get("terms", "")
-    search_user = modCaseInsSearch(User, User.username, terms).first()
-    games = modCaseInsSearch(Game, Game.name, terms).all()
+    search_user = mod_cs_search(User, User.username, terms).first()
+    games = mod_cs_search(Game, Game.name, terms).all()
     return render_template("searchresults.html",
                            terms=terms,
                            title="Search: " + terms,
@@ -113,12 +113,12 @@ def signup():
         return redirect(url_for("index"))
     form = SignupForm()
     if form.validate_on_submit():
-        if not User.query.filter(func.lower(User.username) == func.lower(form.uName.data)).first():
+        if not mod_cs_search(User, User.username, form.uName.data).first():
             addedUser = User(form.uName.data, form.eMail.data, form.pWord.data)
             db.session.add(addedUser)
             db.session.commit()
             login_user(addedUser)
-            flash(Markup("<strong>Thank you %s!</strong> Your were successfully signed up!")  % form.uName.data, "success")
+            flash(Markup("<strong>Thank you %s!</strong> Your were successfully signed up!") % form.uName.data, "success")
             return redirect(url_for("index"))
         flash("That username is already taken!", "danger")
         return render_template("signup.html", title="Signup", sigForm=form)
@@ -226,17 +226,23 @@ def splits():
 def split_page(sid):
     sq = Split.query.get(sid)
     if sq:
-        return render_template("game.html", title=sq.name, split=sq)
+        return render_template("split.html", title=sq.name, split=sq)
     return render_template("errorpage.html", title="Split not found.",
                            mainMess="A split with the id of %s was not found" % sid,
                            sideMess="Please make sure the link is valid.")
 
 
-@app.route("/s/create/", methods=["GET","POST"])
+@app.route("/s/create/", methods=["GET", "POST"])
 def split_create():
     if g.user is not None and g.user.is_authenticated():
         form = SplitSubmitPage()
         if form.validate_on_submit():
+            tgame = mod_cs_search(Game, Game.name, form.game.data).first()
+            if not tgame:
+                flash(Markup("That game was not found! Click <a href='%s'>here</a> to submit it!") % url_for("game_submit"), "danger")
+                return render_template("createsplit.html", title="Create splits", form=form)
+            db.session.add(Split(form.name.data, tgame, g.user))
+            db.session.commit()
             flash("%s created a split for %s called %s." % (g.user.username, form.game.data, form.name.data), "info")
             return redirect(url_for("index"))
         flash_errors(form)

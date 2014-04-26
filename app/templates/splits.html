@@ -6,9 +6,11 @@
         <h4>Here are the current splits created.</h4>
         <hr>
         {% if splits|length > 0 %}
+        <ul>
             {% for split in splits %}
-            <h4><a href="{{ url_for('split_page',sid=game.id) }}">{{ split.name }}</a> by <a href="{{ url_for('user_page', uid=split.user.id) }}">{{ split.user.name }}</a></h4>
+            <li><h4><a href="{{ url_for('split_page',sid=split.id) }}">{{ split.name }}</a> by <a href="{{ url_for('user_page', uid=split.user.id) }}">{{ split.user.username }}</a></h4></li>
             {% endfor %}
+        </ul>
         {% else %}
         <h4>None</h4>
         {% endif %}
