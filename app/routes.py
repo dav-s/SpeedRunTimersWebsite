@@ -44,7 +44,7 @@ def foo_page(e):
 
 
 @app.errorhandler(403)
-def fot_age(e):
+def fot_page(e):
     return render_template("errorpage.html", title="Forbidden, Bro!",
                            mainMess="You don't have permission to view this page!",
                            sideMess="Please don't snoop around!"), 403
