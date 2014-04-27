@@ -1,16 +1,16 @@
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
-
+import _md5
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(32), unique=True)
+    username = db.Column(db.String(20), unique=True)
     email = db.Column(db.String(254), unique=True)
     password_hash = db.Column(db.String(160))
 
     def __init__(self, username, email, password):
         self.username = username
-        self.email = email
+        self.change_email(email)
         self.set_password(password)
 
     def set_password(self, password):
@@ -18,6 +18,12 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def get_md5_email(self):
+        return _md5.new(self.email).hexdigest()
+
+    def change_email(self, email):
+        self.email = email.strip().lower()
 
     def is_authenticated(self):
         return True
@@ -31,6 +37,11 @@ class User(db.Model):
     def get_id(self):
         return unicode(self.id)
 
+    def get_gravatar_url(self):
+        return "http://gravatar.com/avatar/%s.jpg?d=retro" % self.get_md5_email()
+
+    def get_gravatar_url(self, size):
+        return "http://gravatar.com/avatar/%s.jpg?d=retro&s=%s" % (self.get_md5_email(), size)
 
     def __repr__(self):
         return "<User %r>" % self.username
@@ -64,3 +75,6 @@ class Split(db.Model):
         self.game = game
         self.user = user
 
+
+    def __repr__(self):
+        return "<Split %r>" % self.name

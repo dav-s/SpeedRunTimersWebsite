@@ -6,7 +6,7 @@ from wtforms import TextField, TextAreaField, BooleanField, PasswordField, valid
 class LoginForm(Form):
     uName = TextField("Username", validators=[
         validators.Required(),
-        validators.Length(min=4, max=32, message="Usernames are 4 to 32 characters in length."),
+        validators.Length(min=4, max=20, message="Usernames are 4 to 20 characters in length."),
         validators.Regexp("^[A-Za-z0-9_]+$", message="Usernames can only contain numbers, letters, and underscores.")])
     pWord = PasswordField("Password", validators=[
         validators.Required(),
@@ -18,7 +18,7 @@ class LoginForm(Form):
 class SignupForm(Form):
     uName = TextField("Username", validators=[
         validators.Required(),
-        validators.Length(min=4, max=32, message="Usernames are 4 to 32 characters in length."),
+        validators.Length(min=4, max=20, message="Usernames are 4 to 20 characters in length."),
         validators.Regexp("^[A-Za-z0-9_]+$", message="Usernames can only contain numbers, letters, and underscores.")])
     eMail = TextField("E-Mail", validators=[
         validators.Required(),

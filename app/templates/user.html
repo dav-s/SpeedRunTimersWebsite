@@ -2,22 +2,33 @@
 {% block content %}
 <div class="row">
     <div class="col-md-10 col-md-offset-1">
-        <h1>{{ user.username }}</h1>
-        <hr>
-        {% if userspage %}
-        <p class="text-muted">This is your page</p>
-        {% endif %}
-        <h3>Email: {{ user.email }}</h3>
-        <h3>Splits:</h3>
-        {% if user.splits.all()|length >0 %}
-            <ul>
-            {% for splits in user.splits.all() %}
-                <li><a href="{{ url_for('split_page', sid=splits.id) }}">{{ splits.name }}</a></li>
-            {% endfor %}
-            </ul>
-        {% else %}
-            <p>None</p>
-        {% endif %}
+        <br>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="well well-lg">
+                    <h3>{{ user.username }}</h3>
+                    <img src="{{ user.get_gravatar_url(150) }}" class="img-thumbnail">
+                    {% if userspage %}
+                    <hr>
+                    <p class="text-muted">This is your page</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-9">
+                <br>
+                <h4>Email: {{ user.email }}</h4>
+                <h4>Splits:</h4>
+                {% if user.splits.all()|length >0 %}
+                <ul>
+                    {% for splits in user.splits.all() %}
+                    <li><a href="{{ url_for('split_page', sid=splits.id) }}">{{ splits.name }}</a></li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>None</p>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
