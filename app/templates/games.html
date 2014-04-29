@@ -2,8 +2,7 @@
 {% block content %}
 <div class="row">
     <div class="col-md-10 col-md-offset-1">
-        <h1>Games</h1>
-        <h4>If a game is not in the list, click <a href="{{ url_for('game_submit') }}">here</a> to submit it to the list.</h4>
+        <h1>Games <small>If a game is not in the list, click <a href="{{ url_for('game_submit') }}">here</a> to submit it to the list.</small></h1>
         <hr>
         <ul>
         {% for game in games %}

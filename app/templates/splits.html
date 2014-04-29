@@ -2,8 +2,7 @@
 {% block content %}
 <div class="row">
     <div class="col-md-10 col-md-offset-1">
-        <h1>Splits</h1>
-        <h4>Here are the current splits created.</h4>
+        <h1>Splits <small>Click <a href="{{ url_for('split_create') }}">here</a> to create a split.</small></h1>
         <hr>
         {% if splits|length > 0 %}
         <ul>

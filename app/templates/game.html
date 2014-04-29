@@ -6,9 +6,11 @@
         <hr>
         <h3>Splits: </h3>
         {% if game.splits.all()|length > 0 %}
+            <ul>
             {% for splits in game.splits.all() %}
-                <p><a href="{{ url_for('split_page', sid=splits.id) }}">{{ splits.name }}</a> by <a href="{{ url_for('user_page', uid=splits.user.id) }}">{{splits.user.username}}</a></p>
+                <li><p><a href="{{ url_for('split_page', sid=splits.id) }}">{{ splits.name }}</a> by <a href="{{ url_for('user_page', uid=splits.user.id) }}">{{splits.user.username}}</a></p></li>
             {% endfor %}
+            </ul>
         {% else %}
             <p>None</p>
         {% endif %}

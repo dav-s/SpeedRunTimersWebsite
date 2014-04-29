@@ -25,7 +25,7 @@
     <p class="navbar-text pull-right">
       {% if g.user.is_authenticated() %}
       Logged in as
-        <a class="navbar-link" href="{{ url_for('user_page', uid=g.user.id) }}">{{ g.user.username }} <img src="{{ g.user.get_gravatar_url(20) }}"></a>
+        <a class="navbar-link" href="{{ url_for('user_page', uid=g.user.id) }}">{{ g.user.username }}</a>
          | <a href="{{url_for('logout')}}" class="navbar-link">Logout</a>
       {% else %}
       <a href="{{url_for('login')}}" class="navbar-link">Login</a> | <a href="{{url_for('signup')}}" class="navbar-link">Signup</a>

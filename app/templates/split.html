@@ -3,8 +3,9 @@
 <div class="row">
     <div class="col-md-10 col-md-offset-1">
         <h1>{{ split.name }}</h1>
-        <h3>Game: <a href="{{ url_for('game_page',gid=split.game.id) }}">{{ split.game.name }}</a></h3>
-        <h3>By: <a href="{{ url_for('user_page',uid=split.user.id) }}">{{ split.user.username }}</a></h3>
+        <hr>
+        <h4>Game: <a href="{{ url_for('game_page',gid=split.game.id) }}">{{ split.game.name }}</a></h4>
+        <h4>By: <a href="{{ url_for('user_page',uid=split.user.id) }}">{{ split.user.username }}</a></h4>
         <hr>
     </div>
 </div>

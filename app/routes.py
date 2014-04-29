@@ -2,7 +2,7 @@ from app import app, lm, db
 from flask import request, render_template, flash, redirect, url_for, jsonify, g, session, Markup
 from flask.ext.login import login_user, logout_user, current_user
 from forms import LoginForm, SignupForm, ContactForm, GameSubmitForm, SplitSubmitPage
-from models import User, Game, Split
+from models import User, Game, Split, Message
 from sqlalchemy import func
 
 navigationBar = [{"title": "Get it",  "mName": "getit"},
@@ -100,6 +100,8 @@ def about():
 def contact():
     form = ContactForm()
     if form.validate_on_submit():
+        db.session.add(Message(form.name.data, form.email.data, form.title.data, form.message.data))
+        db.commit()
         flash(Markup("<strong>Thank you %s!</strong> Your message was sent!") % form.name.data, "success")
         return redirect(url_for("contact"))
     flash_errors(form)
