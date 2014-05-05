@@ -1,4 +1,5 @@
 from app import db
+import json
 from werkzeug.security import generate_password_hash, check_password_hash
 import _md5
 
@@ -37,11 +38,17 @@ class User(db.Model):
     def get_id(self):
         return unicode(self.id)
 
-    def get_gravatar_url(self):
-        return "http://gravatar.com/avatar/%s.jpg?d=retro" % self.get_md5_email()
+    def get_gravatar_url(self, size=None):
+        if(size):
+            return "http://gravatar.com/avatar/%s.jpg?d=retro&s=%s" % (self.get_md5_email(), size)
+        return "http://gravatar.com/avatar/%s.jpg?d=retro" % (self.get_md5_email())
 
-    def get_gravatar_url(self, size):
-        return "http://gravatar.com/avatar/%s.jpg?d=retro&s=%s" % (self.get_md5_email(), size)
+    def jsonify(self):
+        return json.dumps({
+            "id": self.id,
+            "name": self.username,
+            "avatar_url": self.get_gravatar_url()
+        })
 
     def __repr__(self):
         return "<User %r>" % self.username
@@ -79,3 +86,7 @@ class Split(db.Model):
 
     def __repr__(self):
         return "<Split %r>" % self.name
+
+
+class Race(db.Model):
+    id = db.Column(db.Integer, primary_key=True)

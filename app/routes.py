@@ -5,6 +5,7 @@ from forms import LoginForm, SignupForm, ContactForm, GameSubmitForm, SplitSubmi
 from models import User, Game, Split
 from sqlalchemy import func
 import written
+import json
 
 navigationBar = [{"title": "Get it",  "mName": "getit"},
                  {"title": "About",   "mName": "about"},
@@ -165,10 +166,14 @@ def download():
 
 @app.route("/webclient/")
 def webclient():
+    if g.user is None or not g.user.is_authenticated():
+        return render_template("error_page.html", title="Please log in.",
+                               mainMess="You need to be logged in to view this page.",
+                               sideMess="Please log in.")
     rid = request.args.get("rid", "")
     if not rid:
         return fof_page(None)
-    return render_template("webclient.html", race=rid)
+    return render_template("webclient.html", race=json.dumps({"id": rid}))
 
 
 @app.route("/g/")

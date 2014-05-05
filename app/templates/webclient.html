@@ -2,16 +2,19 @@
 {% block content %}
 <!--Start Rest'O'Page-->
 <div class="row">
-  <div class="col-md-10 col-md-offset-1">
-    <h1>Webclient</h1>
-    <h3 class="text-info" id="connection-status">Connecting...</h3>
-  </div>
+    <div class="col-md-10 col-md-offset-1">
+        <h1>Webclient</h1>
+        <h3 class="text-info" id="connection-status">Connecting...</h3>
+        <h4>Updates:</h4>
+        <div id="updates"></div>
+        <h4>Users currently connected:</h4>
+        <ul id="users"></ul>
+    </div>
 </div>
 
 <script>
-    var rid = {{ rid }};
-    var uid = {{ g.user.id }};
-    var username = {{ g.user.username }}
+    var user = {{ g.user.jsonify()|safe}};
+    var race = {{ race|safe }};
 </script>
 <script src="{{url_for('static',filename='js/socket.io.min.js')}}"></script>
 <script src="{{url_for('static',filename='js/webclient.js')}}"></script>
