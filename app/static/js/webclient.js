@@ -16,12 +16,18 @@ jQuery(function () {
     });
 
     socket.on("user join", function(user){
-        $updates.html(user.name+" has joined.")
+        $updates.attr("class","text-success");
+        $updates.html(user.name+" has joined.");
+    });
+
+    socket.on("user leave", function(user){
+        $updates.attr("class","text-danger");
+        $updates.html(user.name+" has left.");
     });
 
     socket.on("update users", function(users){
         var res="";
-        for(var i= 0; i<users.length; i++){
+        for(var i= 0; i < users.length; i++){
             res+="<li><img src='"+users[i].avatar_url+"&s=15'> "+users[i].name+"</li>\n";
         }
         $users.html(res)
