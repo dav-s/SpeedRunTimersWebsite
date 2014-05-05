@@ -12,6 +12,10 @@ More information can be found on [this word document.](https://github.com/EpicDa
 * Flask-WTForms
 * Flask-Login
 
+####WebSockets:
+* Node.js
+* Socket.io 0.9
+
 ####Web Stuffs:
 * Bootstrap
 * JQuery

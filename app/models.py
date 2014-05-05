@@ -47,32 +47,6 @@ class User(db.Model):
         return "<User %r>" % self.username
 
 
-class Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(140))
-    name = db.Column(db.String(128))
-    email = db.Column(db.String(254))
-
-    def __init__(self, name, email, title, contents):
-        self.name = name
-        self.email = email
-        self.title = title
-        self.set_contents(contents)
-
-    def set_contents(self, contents):
-        f = open("generated/posts/%s" % self.id, "w")
-        f.write(contents)
-        f.close()
-
-    def get_contents(self):
-        f = open("generated/posts/%s" % self.id, "r")
-        res = f.read()
-        f.close()
-        return res
-
-    def __repr__(self):
-        return "<Message %r>" % self.title
-
 
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)

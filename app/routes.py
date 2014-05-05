@@ -2,8 +2,9 @@ from app import app, lm, db
 from flask import request, render_template, flash, redirect, url_for, jsonify, g, session, Markup
 from flask.ext.login import login_user, logout_user, current_user
 from forms import LoginForm, SignupForm, ContactForm, GameSubmitForm, SplitSubmitPage
-from models import User, Game, Split, Message
+from models import User, Game, Split
 from sqlalchemy import func
+import written
 
 navigationBar = [{"title": "Get it",  "mName": "getit"},
                  {"title": "About",   "mName": "about"},
@@ -100,8 +101,7 @@ def about():
 def contact():
     form = ContactForm()
     if form.validate_on_submit():
-        db.session.add(Message(form.name.data, form.email.data, form.title.data, form.message.data))
-        db.commit()
+        written.write_message(form.name.data, form.email.data, form.title.data, form.message.data)
         flash(Markup("<strong>Thank you %s!</strong> Your message was sent!") % form.name.data, "success")
         return redirect(url_for("contact"))
     flash_errors(form)
@@ -165,7 +165,10 @@ def download():
 
 @app.route("/webclient/")
 def webclient():
-    return render_template("webclient.html")
+    rid = request.args.get("rid", "")
+    if not rid:
+        return fof_page(None)
+    return render_template("webclient.html", race=rid)
 
 
 @app.route("/g/")
