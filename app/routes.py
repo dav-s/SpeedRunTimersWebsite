@@ -164,16 +164,15 @@ def download():
     return render_template("download.html", title="Download")
 
 
-@app.route("/webclient/")
-def webclient():
+@app.route("/webclient/<int:rid>/")
+def webclient(rid):
     if g.user is None or not g.user.is_authenticated():
         return render_template("error_page.html", title="Please log in.",
                                mainMess="You need to be logged in to view this page.",
                                sideMess="Please log in.")
-    rid = request.args.get("rid", "")
     if not rid:
         return fof_page(None)
-    return render_template("webclient.html", race=json.dumps({"id": rid}))
+    return render_template("webclient.html", title=rid, race=json.dumps({"id": rid, "name": rid}))
 
 
 @app.route("/g/")

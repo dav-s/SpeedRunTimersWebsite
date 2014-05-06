@@ -1,7 +1,7 @@
 from app import db
 import json
 from werkzeug.security import generate_password_hash, check_password_hash
-import _md5
+import _md5, os
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -83,6 +83,20 @@ class Split(db.Model):
         self.game = game
         self.user = user
 
+    def write_file(self):
+        path = "generated/splists/"
+        if not os.path.exists(path):
+            os.makedirs(path)
+        fname = "%s.splt" % (self.id)
+        f = open(os.path.join(path, fname), "w+")
+        f.write("File Contents")
+        f.close()
+
+    def get_file(self):
+        f = open(os.path.join("generated/splits/", ("%s.splt" % self.id)))
+        resp = f.read()
+        f.close()
+        return resp
 
     def __repr__(self):
         return "<Split %r>" % self.name
@@ -90,3 +104,12 @@ class Split(db.Model):
 
 class Race(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+
+    split_id = db.Column(db.Integer, db.ForeignKey("split.id"))
+    split = db.relationship("Split",
+                            backref=db.backref("races", lazy="dynamic"))
+
+    def __init__(self, split):
+        self.split = split
+
+

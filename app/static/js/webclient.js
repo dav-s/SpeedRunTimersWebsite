@@ -28,7 +28,7 @@ jQuery(function () {
     socket.on("update users", function(users){
         var res="";
         for(var i= 0; i < users.length; i++){
-            res+="<li><img src='"+users[i].avatar_url+"&s=15'> "+users[i].name+"</li>\n";
+            res+=getUserDisp(users[i]);
         }
         $users.html(res)
 
@@ -45,3 +45,8 @@ jQuery(function () {
     });
 
 });
+
+
+function getUserDisp(user){
+    return "<li class='list-group-item'><img src='"+user.avatar_url+"&s=15'> <a href='/u/"+user.id+"/'>"+user.name+"</a></li>\n";
+}

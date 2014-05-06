@@ -3,17 +3,45 @@
 <!--Start Rest'O'Page-->
 <div class="row">
     <div class="col-md-10 col-md-offset-1">
-        <h1>Webclient</h1>
-        <h3 class="text-info" id="connection-status">Connecting...</h3>
-        <h4>Updates:</h4>
-        <div id="updates"></div>
-        <h4>Users currently connected:</h4>
-        <ul id="users"></ul>
+        <h1>{{ title }} <small>Webclient</small></h1>
+
+        <hr>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Connection Status</div>
+                    <div class="panel-body">
+                        <h4 class="text-info" id="connection-status">Connecting...</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Updates</div>
+                    <div class="panel-body">
+                        <h4 id="updates"></h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Connected Users</div>
+                    <ul class="list-group" id="users"></ul>
+                </div>
+            </div>
+        </div>
+
+
+
+        <hr>
+
     </div>
 </div>
 
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/webclient.css')}}"/>
 <script>
-    var user = {{ g.user.jsonify()|safe}};
+    var user = {{ g.user.jsonify()|safe }};
     var race = {{ race|safe }};
 </script>
 <script src="{{url_for('static',filename='js/socket.io.min.js')}}"></script>
