@@ -1,6 +1,8 @@
 
-
 jQuery(function () {
+
+    var timer = new Timer($("#timer"));
+    timer.initiate();
 
     var socket = io.connect('http://localhost:5037');
 

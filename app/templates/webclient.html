@@ -7,6 +7,10 @@
 
         <hr>
 
+        <div id="timer"></div>
+
+        <hr>
+
         <div class="row">
             <div class="col-md-4">
                 <div class="panel panel-default">
@@ -32,14 +36,11 @@
             </div>
         </div>
 
-
-
-        <hr>
-
     </div>
 </div>
 
 <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/webclient.css')}}"/>
+<script src="{{url_for('static', filename='js/timer.js')}}"></script>
 <script>
     var user = {{ g.user.jsonify()|safe }};
     var race = {{ race|safe }};

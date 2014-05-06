@@ -167,7 +167,7 @@ def download():
 @app.route("/webclient/<int:rid>/")
 def webclient(rid):
     if g.user is None or not g.user.is_authenticated():
-        return render_template("error_page.html", title="Please log in.",
+        return render_template("errorpage.html", title="Please log in.",
                                mainMess="You need to be logged in to view this page.",
                                sideMess="Please log in.")
     if not rid:
