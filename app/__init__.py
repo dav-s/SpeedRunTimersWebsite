@@ -14,4 +14,6 @@ lm = LoginManager()
 lm.init_app(app)
 lm.login_view = "login"
 
+apikey = "temporary"  # Temporary place for API key; will change location later.
+
 from app import routes, models, forms

@@ -1,6 +1,7 @@
 var io = require('socket.io').listen(5037);
 
 var users = {};
+var races = {};
 
 io.sockets.on("connection", function(socket){
 
@@ -11,18 +12,35 @@ io.sockets.on("connection", function(socket){
     socket.on("join race", function(data){
         users[socket.id]["race"] = data.race;
         socket.join(data.race.id);
+        if(races[data.race.id]){
+           socket.emit("start timer", {
+               start:races[data.race.id],
+               current: Date.now()
+           });
+        }
         io.sockets.in(data.race.id).emit("user join", users[socket.id]);
         io.sockets.in(data.race.id).emit("update users", getUsersInRace(data.id));
+        socket.broadcast.to(data.race.id).emit("update timer", getTimeResp(data.race.id));
+    });
+
+    socket.on("start timer", function(){
+        var room = users[socket.id].race.id;
+        races[room]=Date.now();
+        io.sockets.in(room).emit("start timer", {
+            start: Date.now(),
+            current: Date.now()
+        });
     });
 
     socket.on("disconnect", function(){
         var room = users[socket.id].race.id;
         socket.broadcast.to(room).emit("user leave", users[socket.id]);
-        console.log(users);
         delete users[socket.id];
-        console.log(users);
-        console.log(getUsersInRace(room));
+        if(getUsersInRace(room).length<=0){
+            delete races[room];
+        }
         socket.broadcast.to(room).emit("update users", getUsersInRace(room));
+        socket.broadcast.to(room).emit("update timer", getTimeResp(room));
     });
 });
 
@@ -35,4 +53,8 @@ function getUsersInRace(room){
         }
     }
     return room_users;
+}
+
+function getTimeResp(room){
+    return {start:races[room], current:Date.now()};
 }

@@ -4,6 +4,11 @@
     <div class="col-md-10 col-md-offset-1">
         <h1>{{ split.name }}</h1>
         <hr>
+        <form action="{{ url_for('split_edit', sid=split.id) }}">
+            <button class="btn btn-primary" type="submit">
+                {% if split.user.id == g.user.id %}Edit This{% elif g.user %}Clone and Edit This{% else %}<a href="{{url_for('login')}}">Log in to edit</a>{% endif %}
+            </button>
+        </form>
         <h4>Game: <a href="{{ url_for('game_page',gid=split.game.id) }}">{{ split.game.name }}</a></h4>
         <h4>By: <a href="{{ url_for('user_page',uid=split.user.id) }}">{{ split.user.username }}</a></h4>
         <hr>

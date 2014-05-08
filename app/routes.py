@@ -4,6 +4,7 @@ from flask.ext.login import login_user, logout_user, current_user
 from forms import LoginForm, SignupForm, ContactForm, GameSubmitForm, SplitSubmitPage
 from models import User, Game, Split
 from sqlalchemy import func
+from wrappers import apikey_req
 import written
 import json
 
@@ -250,26 +251,53 @@ def split_create():
             if not tgame:
                 flash(Markup("That game was not found! Click <a href='%s'>here</a> to submit it!") % url_for("game_submit"), "danger")
                 return render_template("createsplit.html", title="Create splits", form=form)
-            db.session.add(Split(form.name.data, tgame, g.user))
+            tsplit = Split(form.name.data, tgame, g.user)
+            db.session.add(tsplit)
             db.session.commit()
             flash("%s created a split for %s called %s." % (g.user.username, form.game.data, form.name.data), "info")
-            return redirect(url_for("index"))
+            return redirect(url_for("split_page", sid=tsplit.id))
         flash_errors(form)
         return render_template("createsplit.html", title="Create splits", form=form)
     flash(Markup('You need to be logged in to create splits. Sign up <a href="%s">here</a>.' % url_for("signup")), "danger")
     return redirect(url_for("index"))
 
 
+@app.route("/s/<int:sid>/edit/", methods=["GET", "POST"])
+def split_edit(sid):
+    sq = Split.query.get(sid)
+    if sq:
+        if request.method == "POST":
+            dat = request.form
+            return ",<br>".join(["%s. %s = %s" % (n, dat["name%s" % n], dat["time%s" % n]) for n in range(1, int(dat["n"])+1)])
+        return render_template("editsplit.html", title=sq.name, split=sq)
+    return render_template("errorpage.html", Title="Split not found",
+                           mainMess="Split not found",
+                           sideMess="Split not found.")
+
 
 # APIs
 
-@app.route("/api/")
-def api_home():
-    return "Much Wow, Many API"
 
-@app.route("/api/user_by_id/<int:uid>/")
+@app.route("/api/u/<int:uid>/", methods=["POST"])
+@apikey_req
 def get_user(uid):
     uq = User.query.get(uid)
     if uq:
         return jsonify(id=uq.id, username=uq.username)
-    return "No User with that id was found."
+    return "none"
+
+@app.route("/api/s/<int:sid>/", methods=["POST"])
+@apikey_req
+def get_split(sid):
+    sq = Split.query.get(sid)
+    if sq:
+        return jsonify(id=sq.id, name=sq.name)
+    return "none"
+
+
+
+@app.route("/api/r/<int:rid>", methods=["POST"])
+@apikey_req
+def get_race(rid):
+    return rid
+

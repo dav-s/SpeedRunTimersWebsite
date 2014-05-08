@@ -83,13 +83,13 @@ class Split(db.Model):
         self.game = game
         self.user = user
 
-    def write_file(self):
+    def write_file(self, contents):
         path = "generated/splists/"
         if not os.path.exists(path):
             os.makedirs(path)
         fname = "%s.splt" % (self.id)
         f = open(os.path.join(path, fname), "w+")
-        f.write("File Contents")
+        f.write(contents)
         f.close()
 
     def get_file(self):
