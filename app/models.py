@@ -84,7 +84,7 @@ class Split(db.Model):
         self.user = user
 
     def write_file(self, contents):
-        path = "generated/splists/"
+        path = "generated/splits/"
         if not os.path.exists(path):
             os.makedirs(path)
         fname = "%s.splt" % (self.id)
@@ -92,11 +92,15 @@ class Split(db.Model):
         f.write(contents)
         f.close()
 
-    def get_file(self):
-        f = open(os.path.join("generated/splits/", ("%s.splt" % self.id)))
+    def get_file_array(self):
+        path = os.path.join("generated/splits/", ("%s.splt" % self.id))
+        if not os.path.exists(path):
+            return None
+        f = open(path)
         resp = f.read()
         f.close()
-        return resp
+        lines = resp.splitlines()
+        return [(lines[i], lines[i+1]) for i in range(1, int(lines[0])*2, 2)]
 
     def __repr__(self):
         return "<Split %r>" % self.name

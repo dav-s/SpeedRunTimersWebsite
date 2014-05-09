@@ -11,7 +11,27 @@
         </form>
         <h4>Game: <a href="{{ url_for('game_page',gid=split.game.id) }}">{{ split.game.name }}</a></h4>
         <h4>By: <a href="{{ url_for('user_page',uid=split.user.id) }}">{{ split.user.username }}</a></h4>
-        <hr>
+        <br>
+        <div class="container col-md-offset-1 col-md-10">
+        {% if sdata %}
+            <table class="table table-striped">
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Best Time</th>
+                </tr>
+                {% for sp in sdata %}
+                <tr>
+                    <td>{{loop.index}}</td>
+                    <td>{{sp[0]}}</td>
+                    <td>{{sp[1]}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+        <h4>None</h4>
+        {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}

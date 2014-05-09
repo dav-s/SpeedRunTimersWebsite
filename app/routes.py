@@ -236,7 +236,8 @@ def splits():
 def split_page(sid):
     sq = Split.query.get(sid)
     if sq:
-        return render_template("split.html", title=sq.name, split=sq)
+        fa = sq.get_file_array()
+        return render_template("split.html", title=sq.name, split=sq, sdata=fa)
     return render_template("errorpage.html", title="Split not found.",
                            mainMess="A split with the id of %s was not found" % sid,
                            sideMess="Please make sure the link is valid.")
@@ -270,7 +271,7 @@ def split_edit(sid):
             dat = request.form
             flist = [(dat["name%s" % n], dat["time%s" % n]) for n in range(1, int(dat["n"])+1)]
             sq.write_file("%s\n%s" % (len(flist), "\n".join(["%s\n%s" % (t[0], t[1]) for t in flist])))
-            flash("Success")
+            flash("Success", "success")
             return redirect(url_for('split_page', sid=sid))
         return render_template("editsplit.html", title=sq.name, split=sq)
     return render_template("errorpage.html", Title="Split not found",
