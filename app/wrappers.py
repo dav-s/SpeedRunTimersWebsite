@@ -7,5 +7,5 @@ def apikey_req(f):
     def dec_func(*args, **kwargs):
         if request.form.get("apikey") == apikey:
             return f(*args, **kwargs)
-        return "Key not valid."
+        return "Key not valid.", 401
     return dec_func

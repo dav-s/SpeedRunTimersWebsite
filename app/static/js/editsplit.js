@@ -28,6 +28,6 @@ jQuery(function(){
 
 function getRowHTML(n){
     return "<tr><td>"+n+"</td>" +
-        "<td><input type='text' class='form-control' id='name"+n+"' name='name"+n+"' placeholder='Enter name "+n+"'></td>" +
-        "<td><input type='text' class='form-control' id='time"+n+"' name='time"+n+"' placeholder='Enter best time "+n+"'></td></tr>";
+        "<td><input type='text' class='form-control' id='name"+n+"' name='name"+n+"' placeholder='Enter name "+n+"' required></td>" +
+        "<td><input type='time' class='form-control' id='time"+n+"' name='time"+n+"' placeholder='Enter best time "+n+"'></td></tr>";
 }

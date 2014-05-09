@@ -268,7 +268,10 @@ def split_edit(sid):
     if sq:
         if request.method == "POST":
             dat = request.form
-            return ",<br>".join(["%s. %s = %s" % (n, dat["name%s" % n], dat["time%s" % n]) for n in range(1, int(dat["n"])+1)])
+            flist = [(dat["name%s" % n], dat["time%s" % n]) for n in range(1, int(dat["n"])+1)]
+            sq.write_file("%s\n%s" % (len(flist), "\n".join(["%s\n%s" % (t[0], t[1]) for t in flist])))
+            flash("Success")
+            return redirect(url_for('split_page', sid=sid))
         return render_template("editsplit.html", title=sq.name, split=sq)
     return render_template("errorpage.html", Title="Split not found",
                            mainMess="Split not found",
@@ -284,7 +287,7 @@ def get_user(uid):
     uq = User.query.get(uid)
     if uq:
         return jsonify(id=uq.id, username=uq.username)
-    return "none"
+    return "none", 404
 
 @app.route("/api/s/<int:sid>/", methods=["POST"])
 @apikey_req
@@ -292,12 +295,17 @@ def get_split(sid):
     sq = Split.query.get(sid)
     if sq:
         return jsonify(id=sq.id, name=sq.name)
-    return "none"
+    return "none", 404
 
 
 
-@app.route("/api/r/<int:rid>", methods=["POST"])
+@app.route("/api/r/<int:rid>/", methods=["POST"])
 @apikey_req
 def get_race(rid):
     return rid
 
+@app.route("/api/r/<int:rid>/results/", methods=["POST"])
+@apikey_req
+def post_race_results(rid):
+    dat = request.form["data"]
+    return dat
