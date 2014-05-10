@@ -1,4 +1,4 @@
-
+var rownum=1;
 
 jQuery(function(){
 
@@ -7,7 +7,6 @@ jQuery(function(){
     var $table = $("#ftable");
     var $hidey = $("#number");
 
-    var rownum=1;
 
     $table.append(getRowHTML(rownum));
 

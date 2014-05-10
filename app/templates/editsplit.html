@@ -20,5 +20,24 @@
         </form>
     </div>
 </div>
+
 <script src="{{url_for('static', filename='js/editsplit.js')}}"></script>
+
+{% if sdata %}
+<script>
+    jQuery(function(){
+        var $table = $("#ftable");
+        var $hidey = $("#number");
+        {% for n in range((sdata|length)-1) %}
+            rownum++;
+            $table.append(getRowHTML(rownum));
+            $hidey.attr("value", rownum);
+        {% endfor %}
+        {% for dat in sdata %}
+            $("#name{{loop.index}}").val("{{dat[0]}}");
+            $("#time{{loop.index}}").val("{{dat[1]}}");
+        {% endfor %}
+    });
+</script>
+{% endif %}
 {% endblock %}

@@ -1,5 +1,5 @@
 from app import app, lm, db
-from flask import request, render_template, flash, redirect, url_for, jsonify, g, session, Markup
+from flask import request, render_template, flash, redirect, url_for, jsonify, g, session, Markup, abort
 from flask.ext.login import login_user, logout_user, current_user
 from forms import LoginForm, SignupForm, ContactForm, GameSubmitForm, SplitSubmitPage
 from models import User, Game, Split
@@ -8,8 +8,7 @@ from wrappers import apikey_req
 import written
 import json
 
-navigationBar = [{"title": "Get it",  "mName": "getit"},
-                 {"title": "About",   "mName": "about"},
+navigationBar = [{"title": "About",   "mName": "about"},
                  {"title": "Contact", "mName": "contact"},
                  {"title": "Users",   "mName": "users"},
                  {"title": "Splits",  "mName": "splits"},
@@ -165,8 +164,13 @@ def download():
     return render_template("download.html", title="Download")
 
 
+@app.route("/webclient/")
+def webclient():
+    return abort(404)
+
+
 @app.route("/webclient/<int:rid>/")
-def webclient(rid):
+def webclient_race(rid):
     if g.user is None or not g.user.is_authenticated():
         return render_template("errorpage.html", title="Please log in.",
                                mainMess="You need to be logged in to view this page.",
@@ -270,10 +274,16 @@ def split_edit(sid):
         if request.method == "POST":
             dat = request.form
             flist = [(dat["name%s" % n], dat["time%s" % n]) for n in range(1, int(dat["n"])+1)]
-            sq.write_file("%s\n%s" % (len(flist), "\n".join(["%s\n%s" % (t[0], t[1]) for t in flist])))
+            if(not(sq.user.id==g.user.id)):
+                sq = Split(sq.name, sq.game, g.user)
+                db.session.add(sq)
+                db.session.commit()
+            sq.write_file("%s\n%s\n" % (len(flist), "\n".join(["%s\n%s" % (t[0], t[1]) for t in flist])))
             flash("Success", "success")
-            return redirect(url_for('split_page', sid=sid))
-        return render_template("editsplit.html", title=sq.name, split=sq)
+            return redirect(url_for('split_page', sid=sq.id))
+
+        sdata = sq.get_file_array()
+        return render_template("editsplit.html", title=sq.name, split=sq, sdata=sdata)
     return render_template("errorpage.html", Title="Split not found",
                            mainMess="Split not found",
                            sideMess="Split not found.")
