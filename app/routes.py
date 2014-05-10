@@ -274,9 +274,12 @@ def split_edit(sid):
         if request.method == "POST":
             dat = request.form
             flist = [(dat["name%s" % n], dat["time%s" % n]) for n in range(1, int(dat["n"])+1)]
-            if(not(sq.user.id==g.user.id)):
-                sq = Split(sq.name, sq.game, g.user)
+            if not (sq.user.id == g.user.id):
+                sq = Split(dat["sname"], sq.game, g.user)
                 db.session.add(sq)
+                db.session.commit()
+            else:
+                sq.name = dat["sname"]
                 db.session.commit()
             sq.write_file("%s\n%s\n" % (len(flist), "\n".join(["%s\n%s" % (t[0], t[1]) for t in flist])))
             flash("Success", "success")

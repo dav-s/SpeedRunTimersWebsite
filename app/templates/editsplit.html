@@ -3,8 +3,17 @@
 <div class="row">
     <div class="col-md-6 col-md-offset-3">
         <h1>Edit {{ split.name }}</h1>
+        <hr>
         <form class="form-horizontal" role="form" action="" method="POST" name="editsplit">
             <input type="hidden" name="n" value="1" id="number">
+
+            <div class="form-group">
+                <label for="sname" class="col-md-2">Split Name:</label>
+                <div class="col-md-10">
+                    <input class="form-control" type="text" name="sname" id="sname" value="{{split.name}}" required>
+                </div>
+            </div>
+
             <table class="table" id="ftable">
                 <tr>
                     <th>#</th>

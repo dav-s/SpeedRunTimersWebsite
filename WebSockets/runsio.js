@@ -48,8 +48,9 @@ function getUsersInRace(room){
     var clients = io.sockets.clients(room);
     var room_users=[];
     for(var i = 0; i < clients.length; i++){
-        if(users[clients[i].id]){
-            room_users.push(users[clients[i].id]);
+        var tu = users[clients[i].id]
+        if(tu){
+            room_users.push(tu);
         }
     }
     return room_users;
