@@ -9,7 +9,7 @@ Timer.prototype.$timer = null;
 Timer.prototype.sTime = 0;
 Timer.prototype.cTime = 0;
 
-Timer.prototype.tickLength=100;
+Timer.prototype.tickLength=50;
 
 Timer.prototype.isRunning = false;
 
@@ -28,6 +28,7 @@ Timer.prototype.tick = function(){
 Timer.prototype.updateTime = function(t){
     this.sTime= t.start;
     this.cTime= t.current;
+    this.updateHTML();
 };
 
 Timer.prototype.initiate = function(){
@@ -42,7 +43,7 @@ Timer.prototype.initiate = function(){
 };
 
 Timer.prototype.updateHTML = function(){
-    this.$timer.html("<h2>"+formatTime(this.cTime - this.sTime)+"</h2>");
+    this.$timer.html(formatTime(this.cTime - this.sTime));
 };
 
 Timer.prototype.stop = function(){
@@ -51,5 +52,30 @@ Timer.prototype.stop = function(){
 };
 
 function formatTime(time){
-    return time;
+    var ms = time % 1000;
+    time = Math.floor(time/1000);
+    var s = time % 60;
+    time = Math.floor(time/60);
+    var m = time % 60;
+    var h = Math.floor(time/60);
+    return "<h1 style='display: inline;'>"+pad2(h)+":</h1>" +
+        "<h2 style='display: inline;'>"+pad2(m)+":</h2>" +
+        "<h3 style='display: inline;'>"+pad2(s)+".</h3>" +
+        "<h4 style='display: inline;'>"+pad3(ms)+"</h4>";
+}
+
+function pad2(n){
+    if(n<10){
+        return "0"+n;
+    }
+    return n;
+}
+
+function pad3(n){
+    if(n>=100){
+        return n;
+    }if(n>=10){
+        return "0"+n;
+    }
+    return "00"+n;
 }

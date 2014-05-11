@@ -9,13 +9,18 @@ jQuery(function () {
     var $updates = $("#updates");
     var $users = $("#users");
     var $start_button = $("#start-button");
-    var $stop_button = $("#stop-button");
+    var $split_button = $("#split-button");
     var $pbars = $("#progress-bars");
+
+    var race = {};
+
+    var alt_cols = ["#E6E6E6", "#CFCFCF"];
 
     var cur_users = [];
 
     function updateUserHTMLList(){
-        var res="";
+        var res="<tr><th>Place</th>" +
+            "<th>User</th></tr>";
         for(var i= 0; i < cur_users.length; i++){
             res+=getUserDisp(cur_users[i]);
         }
@@ -25,29 +30,61 @@ jQuery(function () {
     function updateUserProgBars(){
         $pbars.html("");
         for(var i=0; i<cur_users.length; i++){
-            $pbars.append('<div class="progress">' +
-                '<div class="progress-bar" role="progressbar">' +
-                '</div>' +
-                '</div>');
+            var temp = "<div class='col-md-1'>"+cur_users[i].name+":</div><div class='col-md-11'><div class='progress'>";
+            var splits = race.split.splits;
+            var width = 100/splits.length;
+            for(var j = 0; j<splits.length; j++){
+                if(j<cur_users[i].position){
+                    temp+='<div data-toggle="tooltip" class="progress-bar datpop" data-placement="right"'+
+                        'data-content="'+splits[j].name+'"' +
+                        'style="width: '+width+'%; background-color: '+(j%2 ? tinycolor.darken(cur_users[i].color, amount=5) : cur_users[i].color)+';">' +
+                        '</div>';
+                }else{
+                    temp+='<div data-toggle="tooltip" class="progress-bar datpop" data-placement="right"'+
+                        'data-content="'+splits[j].name+'"' +
+                        'style="width: '+width+'%; background-color: '+alt_cols[j%alt_cols.length]+';">' +
+                        '</div>';
+                }
+            }
+            $pbars.append(temp+"</div></div>");
         }
+        $(".datpop").popover({
+            trigger: "hover"
+        });
     }
+
+    $([window, document]).focusin(function(){
+        if(timer.isRunning){
+            socket.emit("update all");
+        }
+    });
+
 
     $start_button.click(function(){
         socket.emit("start timer");
     });
 
-    $stop_button.click(function(){
-        timer.stop();
-        $stop_button.hide();
-        $start_button.show();
+    $split_button.click(function(){
+        socket.emit("split");
     });
 
     socket.on("connect", function () {
         $status.attr("class", "text-success");
         $status.html("Successfully connected.");
-        socket.emit("set user", user);
-        socket.emit("join race", {race: {id: race.id, name: "none"}});
+        $start_button.show();
+        socket.emit("setup", {uid:uid, rid:rid});
     });
+
+    socket.on("set race", function(r){
+        race=r;
+        updateUserProgBars();
+    });
+
+    socket.on("set update", function(data){
+        $updates.attr("class", "text-"+data.type);
+        $updates.html(data.text);
+    });
+
 
     socket.on("update timer", function(t){
         timer.updateTime(t);
@@ -56,9 +93,17 @@ jQuery(function () {
     socket.on("start timer", function(t){
         $start_button.hide();
         timer.start(t);
-        $stop_button.show();
+        $split_button.show();
         $updates.attr("class", "text-success");
         $updates.html("The timer was started.");
+    });
+
+    socket.on("stop timer", function(){
+        timer.stop();
+        $split_button.hide();
+        $start_button.show();
+        $updates.attr("class", "text-danger");
+        $updates.html("The timer was stopped.");
     });
 
     socket.on("user join", function(user){
@@ -91,6 +136,14 @@ jQuery(function () {
 
 
 function getUserDisp(user){
-    return "<li class='list-group-item'><img src='"+user.avatar_url+"&s=15'> <a href='/u/"+user.id+"/'>"+user.name+"</a></li>\n";
+    var ttc = tinycolor(user.color);
+    ttc.setAlpha(.25);
+    return "<tr style='background-color: "+ttc.toRgbString()+"'>" +
+        "<td>"+user.place+"</td>" +
+        "<td>" +
+            "<img src='"+user.avatar_url+"&s=15'> " +
+            "<a href='/u/"+user.id+"/'>"+user.name+"</a>" +
+        "</td>" +
+        "</tr>";
 }
 

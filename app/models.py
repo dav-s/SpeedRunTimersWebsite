@@ -43,13 +43,6 @@ class User(db.Model):
             return "http://gravatar.com/avatar/%s.jpg?d=retro&s=%s" % (self.get_md5_email(), size)
         return "http://gravatar.com/avatar/%s.jpg?d=retro" % (self.get_md5_email())
 
-    def jsonify(self):
-        return json.dumps({
-            "id": self.id,
-            "name": self.username,
-            "avatar_url": self.get_gravatar_url()
-        })
-
     def __repr__(self):
         return "<User %r>" % self.username
 
@@ -102,12 +95,17 @@ class Split(db.Model):
         lines = resp.splitlines()
         return [(lines[i], lines[i+1]) for i in range(1, int(lines[0])*2, 2)]
 
+    def file_to_dict(self):
+        fa = self.get_file_array()
+        return [dict(name=l[0], time=l[1]) for l in fa]
+
     def __repr__(self):
         return "<Split %r>" % self.name
 
 
 class Race(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    finished = db.Column(db.Boolean)
 
     split_id = db.Column(db.Integer, db.ForeignKey("split.id"))
     split = db.relationship("Split",
@@ -115,5 +113,6 @@ class Race(db.Model):
 
     def __init__(self, split):
         self.split = split
+        self.finished = False
 
 

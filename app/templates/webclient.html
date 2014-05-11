@@ -3,14 +3,14 @@
 <!--Start Rest'O'Page-->
 <div class="row">
     <div class="col-md-10 col-md-offset-1">
-        <h1>{{ title }} <small>Webclient</small></h1>
+        <h1>{{ race.split.name }} <small>Webclient</small></h1>
 
         <hr>
 
         <div class="container">
             <div id="timer"></div>
-            <button class="btn btn-primary" id="start-button">Start</button>
-            <button class="btn btn-danger" id="stop-button" style="display: none;">Stop</button>
+            <button class="btn btn-primary" id="start-button" style="display: none;">Start</button>
+            <button class="btn btn-success" id="split-button" style="display: none;"><h2>SPLIT!</h2></button>
         </div>
 
         <br>
@@ -41,7 +41,8 @@
             <div class="col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">Connected Users</div>
-                    <ul class="list-group" id="users"></ul>
+                    <table class="table" id="users">
+                    </table>
                 </div>
             </div>
         </div>
@@ -50,10 +51,11 @@
 </div>
 
 <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/webclient.css')}}"/>
+<script src="{{url_for('static', filename='js/tinycolor.js')}}"></script>
 <script src="{{url_for('static', filename='js/timer.js')}}"></script>
 <script>
-    var user = {{ g.user.jsonify()|safe }};
-    var race = {{ race|safe }};
+    var uid = {{ g.user.id }};
+    var rid = {{ race.id }};
 </script>
 <script src="{{url_for('static',filename='js/socket.io.min.js')}}"></script>
 <script src="{{url_for('static',filename='js/webclient.js')}}"></script>

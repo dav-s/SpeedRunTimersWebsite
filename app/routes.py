@@ -2,11 +2,10 @@ from app import app, lm, db
 from flask import request, render_template, flash, redirect, url_for, jsonify, g, session, Markup, abort
 from flask.ext.login import login_user, logout_user, current_user
 from forms import LoginForm, SignupForm, ContactForm, GameSubmitForm, SplitSubmitPage
-from models import User, Game, Split
+from models import User, Game, Split, Race
 from sqlalchemy import func
 from wrappers import apikey_req
 import written
-import json
 
 navigationBar = [{"title": "About",   "mName": "about"},
                  {"title": "Contact", "mName": "contact"},
@@ -175,9 +174,10 @@ def webclient_race(rid):
         return render_template("errorpage.html", title="Please log in.",
                                mainMess="You need to be logged in to view this page.",
                                sideMess="Please log in.")
-    if not rid:
-        return fof_page(None)
-    return render_template("webclient.html", title=rid, race=json.dumps({"id": rid, "name": rid}))
+    rq = Race.query.get(rid)
+    if not rq:
+        return abort(404)
+    return render_template("webclient.html", title=rid, race=rq)
 
 
 @app.route("/g/")
@@ -227,6 +227,24 @@ def user_page(uid):
                            mainMess="A user with the id of %s was not found." % uid,
                            sideMess="Please make sure the link is valid.")
 
+
+@app.route("/r/<int:rid>/")
+def race_page(rid):
+    pass
+
+@app.route("/r/")
+def races():
+    pass
+
+@app.route("/r/create/", methods=["POST"])
+def create_race():
+    sq = Split.query.get(int(request.form["split"]))
+    if sq:
+        race = Race(sq)
+        db.session.add(sq)
+        db.session.commit()
+        return redirect(url_for("webclient_race", rid=race.id))
+    return abort(404)
 
 
 #Split Pages
@@ -300,7 +318,7 @@ def split_edit(sid):
 def get_user(uid):
     uq = User.query.get(uid)
     if uq:
-        return jsonify(id=uq.id, username=uq.username)
+        return jsonify(id=uq.id, name=uq.username, avatar_url=uq.get_gravatar_url())
     return "none", 404
 
 @app.route("/api/s/<int:sid>/", methods=["POST"])
@@ -308,7 +326,7 @@ def get_user(uid):
 def get_split(sid):
     sq = Split.query.get(sid)
     if sq:
-        return jsonify(id=sq.id, name=sq.name)
+        return jsonify(id=sq.id, name=sq.name, splits=sq.file_to_dict())
     return "none", 404
 
 
@@ -316,7 +334,11 @@ def get_split(sid):
 @app.route("/api/r/<int:rid>/", methods=["POST"])
 @apikey_req
 def get_race(rid):
-    return rid
+    rq = Race.query.get(rid)
+    if rq:
+        ts = rq.split
+        return jsonify(id=rid, split=dict(id=ts.id, name=ts.name, splits=ts.file_to_dict()))
+    return "none", 404
 
 @app.route("/api/r/<int:rid>/results/", methods=["POST"])
 @apikey_req
