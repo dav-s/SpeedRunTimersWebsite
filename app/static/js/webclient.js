@@ -114,7 +114,7 @@ jQuery(function () {
     socket.on("connect", function () {
         $status.attr("class", "text-success");
         $status.html("Successfully connected.");
-
+        $start_button.show();
         socket.emit("setup", {uid:uid, rid:rid});
     });
 
@@ -159,7 +159,6 @@ jQuery(function () {
     });
 
     socket.on("update users", function(users){
-        $start_button.show();
         cur_users = users;
         updateUserHTMLList();
         updateUserProgBars();
