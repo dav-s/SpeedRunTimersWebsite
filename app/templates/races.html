@@ -1,0 +1,31 @@
+{% extends "base.html"%}
+{% block content %}
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+        <h1>Races</h1>
+        <hr>
+        <h3>Active Races:</h3>
+        {% if active_races|length>0 %}
+        <ul>
+            {% for race in active_races %}
+            <li><h4><a href="{{ url_for('race_page',rid=race.id) }}">{{ race.split.name }}</a></h4></li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <h4 class="text-muted">None</h4>
+        {% endif %}
+
+        <hr>
+        <h3>All Races:</h3>
+        {% if races|length > 0 %}
+        <ul>
+            {% for race in races %}
+            <li><h4><a href="{{ url_for('race_page',rid=race.id) }}">{{ race.split.name }}</a></h4></li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <h4 class="text-muted">None</h4>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

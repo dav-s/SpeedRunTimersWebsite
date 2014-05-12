@@ -44,6 +44,16 @@
         {% else %}
         <h4>None</h4>
         {% endif %}
+            <h4>Races:</h4>
+            {% if split.races.all()|length >0 %}
+            <ul>
+                {% for race in split.races.all() %}
+                <li><a href="{{ url_for('race_page', rid=race.id) }}">Race: {{ loop.index }}</a></li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>None</p>
+            {% endif %}
         </div>
     </div>
 </div>

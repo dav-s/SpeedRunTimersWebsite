@@ -43,7 +43,7 @@
             $hidey.attr("value", rownum);
         {% endfor %}
         {% for dat in sdata %}
-            $("#name{{loop.index}}").val("{{dat[0]}}");
+            $("#name{{loop.index}}").val("{{dat[0]|safe}}");
             $("#time{{loop.index}}").val("{{dat[1]}}");
         {% endfor %}
     });

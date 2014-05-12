@@ -4,7 +4,7 @@
     <div class="col-md-10 col-md-offset-1">
         <h1>Search results for: {% if terms %} {{terms}} {% else %} Nothing {% endif %}</h1>
         <hr>
-        {% if not user and not repositories and not games %}
+        {% if not user and not splits and not games %}
         <h3 class="muted">None...</h3>
         {% endif %}
 
@@ -20,10 +20,10 @@
             {% endfor %}
         {% endif %}
 
-        {% if repositories %}
-        <h3>Repositories:</h3>
-            {% for repo in repositories %}
-                <h4>{{ repo.name }}</h4>
+        {% if splits %}
+        <h3>Splits:</h3>
+            {% for split in splits %}
+                <h4><a href="{{url_for('split_page',sid=split.id)}}">{{ split.name }}</a></h4>
             {% endfor %}
         {% endif %}
     </div>

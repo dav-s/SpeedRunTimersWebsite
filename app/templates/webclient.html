@@ -3,17 +3,37 @@
 <!--Start Rest'O'Page-->
 <div class="row">
     <div class="col-md-10 col-md-offset-1">
-        <h1>{{ race.split.name }} <small>Webclient</small></h1>
+        <h1>{{ title }} <small>Webclient</small></h1>
 
         <hr>
-
-        <div class="container">
-            <div id="timer"></div>
-            <button class="btn btn-primary" id="start-button" style="display: none;">Start</button>
-            <button class="btn btn-success" id="split-button" style="display: none;"><h2>SPLIT!</h2></button>
+        <div class="row container">
+            <div class="col-md-3">
+                <p class="text-muted">Timer:</p>
+                <div id="timer"></div>
+            </div>
+            <div class="col-md-3">
+                <p class="text-muted">
+                    Last Split:
+                </p>
+                <div id="lasty"></div>
+            </div>
+            <div class="col-md-3">
+                <p class="text-muted">
+                    Next Split:
+                </p>
+                <div id="nexty"></div>
+            </div>
+            <div class="col-md-3">
+                <p class="text-muted">Actions:</p>
+                <button class="btn btn-primary" id="start-button" style="display: none;">Start</button>
+                <button class="btn btn-success" id="split-button" style="display: none;">SPLIT!</button>
+            </div>
         </div>
 
-        <br>
+        <br><hr><br>
+
+
+
 
         <div class="container">
             <div id="progress-bars"></div>

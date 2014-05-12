@@ -11,12 +11,15 @@ jQuery(function () {
     var $start_button = $("#start-button");
     var $split_button = $("#split-button");
     var $pbars = $("#progress-bars");
+    var $nexty = $("#nexty");
+    var $lasty = $("#lasty");
 
     var race = {};
 
     var alt_cols = ["#E6E6E6", "#CFCFCF"];
 
     var cur_users = [];
+    var this_user = {};
 
     function updateUserHTMLList(){
         var res="<tr><th>Place</th>" +
@@ -30,15 +33,23 @@ jQuery(function () {
     function updateUserProgBars(){
         $pbars.html("");
         for(var i=0; i<cur_users.length; i++){
-            var temp = "<div class='col-md-1'>"+cur_users[i].name+":</div><div class='col-md-11'><div class='progress'>";
+            var temp = "<div class='col-md-1'><strong>"+cur_users[i].name+":</strong></div><div class='col-md-11'><div class='progress'>";
             var splits = race.split.splits;
             var width = 100/splits.length;
             for(var j = 0; j<splits.length; j++){
                 if(j<cur_users[i].position){
-                    temp+='<div data-toggle="tooltip" class="progress-bar datpop" data-placement="right"'+
-                        'data-content="'+splits[j].name+'"' +
-                        'style="width: '+width+'%; background-color: '+(j%2 ? tinycolor.darken(cur_users[i].color, amount=5) : cur_users[i].color)+';">' +
-                        '</div>';
+                    if(cur_users[i].times[j]){
+                        temp += '<div data-toggle="tooltip" class="progress-bar datpop" data-placement="right"' +
+                            'title="' + splits[j].name + '"' +
+                            'data-content="'+timeToText(cur_users[i].times[j])+'"' +
+                            'style="width: ' + width + '%; background-color: ' + (j % 2 ? tinycolor.darken(cur_users[i].color, amount = 5) : cur_users[i].color) + ';">' +
+                            '</div>';
+                    }else {
+                        temp += '<div data-toggle="tooltip" class="progress-bar datpop" data-placement="right"' +
+                            'data-content="' + splits[j].name + '"' +
+                            'style="width: ' + width + '%; background-color: ' + (j % 2 ? tinycolor.darken(cur_users[i].color, amount = 5) : cur_users[i].color) + ';">' +
+                            '</div>';
+                    }
                 }else{
                     temp+='<div data-toggle="tooltip" class="progress-bar datpop" data-placement="right"'+
                         'data-content="'+splits[j].name+'"' +
@@ -53,10 +64,42 @@ jQuery(function () {
         });
     }
 
+    function updateUpcomingBox(){
+        this_user = getUser(uid,cur_users);
+        var pos = this_user.position;
+        var len = race.split.splits.length-1;
+        if(!pos){
+            $lasty.html("<h4>None</h4>")
+        }else{
+            if(race.split.splits[pos-1]) {
+                $lasty.html("<h4>" + race.split.splits[pos - 1].name + "</h4>" +
+                    "<h4>" + timeToText(this_user.times[pos - 1]) + "</h4>");
+            }else{
+                $lasty.html("<h4>" + race.split.splits[len].name + "</h4>" +
+                    "<h4>" + timeToText(this_user.times[len]) + "</h4>");
+            }
+        }
+        if(pos<=len){
+            $nexty.html("<h4>"+race.split.splits[pos].name+"</h4>");
+        }else{
+            $nexty.html("<h4 class='text-success'>Finished!</h4>");
+        }
+    }
+
     $([window, document]).focusin(function(){
         if(timer.isRunning){
             socket.emit("update all");
         }
+    });
+
+    $(document).keydown(function(e){
+        if(e.which==32){
+            if(timer.isRunning){
+                socket.emit("split");
+            }
+            return false;
+        }
+        return true;
     });
 
 
@@ -71,7 +114,7 @@ jQuery(function () {
     socket.on("connect", function () {
         $status.attr("class", "text-success");
         $status.html("Successfully connected.");
-        $start_button.show();
+
         socket.emit("setup", {uid:uid, rid:rid});
     });
 
@@ -101,7 +144,6 @@ jQuery(function () {
     socket.on("stop timer", function(){
         timer.stop();
         $split_button.hide();
-        $start_button.show();
         $updates.attr("class", "text-danger");
         $updates.html("The timer was stopped.");
     });
@@ -117,9 +159,15 @@ jQuery(function () {
     });
 
     socket.on("update users", function(users){
+        $start_button.show();
         cur_users = users;
         updateUserHTMLList();
-        updateUserProgBars()
+        updateUserProgBars();
+        updateUpcomingBox();
+    });
+
+    socket.on("game finished", function(){
+        window.location="/r/"+rid+"/";
     });
 
     socket.on("error", function (reason) {
@@ -128,6 +176,7 @@ jQuery(function () {
     });
 
     socket.on("disconnect", function () {
+        timer.stop();
         $status.attr("class", "text-danger");
         $status.html("Disconnected.");
     });
@@ -145,5 +194,14 @@ function getUserDisp(user){
             "<a href='/u/"+user.id+"/'>"+user.name+"</a>" +
         "</td>" +
         "</tr>";
+}
+
+function getUser(id, users){
+    for(var i=0; i<users.length; i++){
+        if(users[i].id==id){
+            return users[i];
+        }
+    }
+    return {};
 }
 

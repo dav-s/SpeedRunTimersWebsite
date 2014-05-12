@@ -1,7 +1,7 @@
 from app import db
 import json
 from werkzeug.security import generate_password_hash, check_password_hash
-import _md5, os
+import _md5, os, time_format, json
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -93,7 +93,7 @@ class Split(db.Model):
         resp = f.read()
         f.close()
         lines = resp.splitlines()
-        return [(lines[i], lines[i+1]) for i in range(1, int(lines[0])*2, 2)]
+        return [(lines[i], time_format.num_to_string(int(lines[i+1])) if lines[i+1] else "") for i in range(1, int(lines[0])*2, 2)]
 
     def file_to_dict(self):
         fa = self.get_file_array()
@@ -116,3 +116,30 @@ class Race(db.Model):
         self.finished = False
 
 
+    def add_res(self, ures):
+        path = "generated/races/"
+        if not os.path.exists(path):
+            os.makedirs(path)
+        path = os.path.join(path, ("%s.rce" % self.id))
+        fconts=""
+        if os.path.isfile(path):
+            f = open(path, "r+")
+            fconts = f.read()
+            f.close()
+        if fconts == "":
+            fconts="[]"
+        f = open(path, "w+")
+        cur = json.loads(fconts)
+        cur.append(ures)
+        f.write(json.dumps(cur))
+        f.close()
+
+
+    def get_file_results(self):
+        path = os.path.join("generated/races/", ("%s.rce" % self.id))
+        if not os.path.exists(path):
+            return None
+        f = open(path)
+        resp = f.read()
+        f.close()
+        return json.loads(resp)

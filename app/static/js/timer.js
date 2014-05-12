@@ -64,6 +64,22 @@ function formatTime(time){
         "<h4 style='display: inline;'>"+pad3(ms)+"</h4>";
 }
 
+function timeToJson(time){
+    var json = {};
+    json.milliseconds = time % 1000;
+    time = Math.floor(time/1000);
+    json.seconds = time % 60;
+    time = Math.floor(time/60);
+    json.minutes = time % 60;
+    json.hours = Math.floor(time/60);
+    return json;
+}
+
+function timeToText(time){
+    var json = timeToJson(time);
+    return json.hours+":"+json.minutes+":"+json.seconds+"."+json.milliseconds;
+}
+
 function pad2(n){
     if(n<10){
         return "0"+n;

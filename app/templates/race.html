@@ -1,0 +1,38 @@
+{% extends "base.html"%}
+{% block content %}
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+        <h1>{{ title }} <small>Based on <a href="{{url_for('split_page',sid=race.split.id)}}">this</a> split.</small></h1>
+        <hr>
+        {% if rdata %}
+            <h2>Results:</h2>
+            <table class="table">
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    {% for user in users %}
+                    <th>{{user.username}}</th>
+                    {% endfor %}
+                </tr>
+                {% for sp in split %}
+                <tr>
+                    {% set rowloop = loop %}
+                    <th>{{ loop.index }}</th>
+                    <td>{{ sp[0] }}</td>
+                    {% for dat in rdata %}
+                    <td>{{dat.times[rowloop.index0]}}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+        <div class="container">
+            <h3>This game has not ended yet.</h3>
+            <form action="{{url_for('webclient_race',rid=race.id)}}" method="get">
+                <button type="submit" class="btn btn-primary">Click here to join it!</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -5,13 +5,14 @@ from forms import LoginForm, SignupForm, ContactForm, GameSubmitForm, SplitSubmi
 from models import User, Game, Split, Race
 from sqlalchemy import func
 from wrappers import apikey_req
-import written
+import written, time_format, json
 
 navigationBar = [{"title": "About",   "mName": "about"},
                  {"title": "Contact", "mName": "contact"},
                  {"title": "Users",   "mName": "users"},
                  {"title": "Splits",  "mName": "splits"},
-                 {"title": "Games",   "mName": "games"}]
+                 {"title": "Games",   "mName": "games"},
+                 {"title": "Races",   "mName": "races"}]
 
 
 @app.context_processor
@@ -84,11 +85,12 @@ def search():
     terms = request.args.get("terms", "")
     search_user = mod_cs_search(User, User.username, terms).first()
     games = mod_cs_search(Game, Game.name, terms).all()
+    splits = mod_cs_search(Split, Split.name, terms).all()
     return render_template("searchresults.html",
                            terms=terms,
                            title="Search: " + terms,
                            user=search_user,
-                           repositories=None,
+                           splits=splits,
                            games=games)
 
 
@@ -163,6 +165,8 @@ def download():
     return render_template("download.html", title="Download")
 
 
+# Webclient Pages
+
 @app.route("/webclient/")
 def webclient():
     return abort(404)
@@ -177,8 +181,9 @@ def webclient_race(rid):
     rq = Race.query.get(rid)
     if not rq:
         return abort(404)
-    return render_template("webclient.html", title=rid, race=rq)
+    return render_template("webclient.html", title=rq.split.name, race=rq)
 
+# Game Pages
 
 @app.route("/g/")
 def games():
@@ -228,13 +233,32 @@ def user_page(uid):
                            sideMess="Please make sure the link is valid.")
 
 
-@app.route("/r/<int:rid>/")
-def race_page(rid):
-    pass
+# Race Pages
 
 @app.route("/r/")
 def races():
-    pass
+    races = Race.query.all()[::-1]
+    return render_template("races.html", title="Races",
+                           races=races,
+                           active_races=[race for race in races if not race.finished])
+
+
+@app.route("/r/<int:rid>/")
+def race_page(rid):
+    rq = Race.query.get(rid)
+    if rq:
+        if rq.finished:
+            data = rq.get_file_results()
+            for d in data:
+                times = d["times"]
+                d["times"] = [time_format.num_to_string(t) for t in times]
+            users = [User.query.get(int(p["uid"])) for p in data]
+            return render_template("race.html", title=rq.split.name, race=rq, rdata=data, users=users, split=rq.split.get_file_array())
+        return render_template("race.html", title=rq.split.name, race=rq)
+    return render_template("errorpage.html", title="Race not found.",
+                           mainMess="A race with the id of %s was not found" % rid,
+                           sideMess="Please make sure the link is valid.")
+
 
 @app.route("/r/create/", methods=["POST"])
 def create_race():
@@ -291,7 +315,29 @@ def split_edit(sid):
     if sq:
         if request.method == "POST":
             dat = request.form
-            flist = [(dat["name%s" % n], dat["time%s" % n]) for n in range(1, int(dat["n"])+1)]
+            olist = [(dat["name%s" % n], dat["time%s" % n]) for n in range(1, int(dat["n"])+1)]
+            flist = [el for el in olist]
+            didfail = False
+
+            for i in range(len(flist)):
+                if len(flist[i][1]) > 0:
+                    try:
+                        temp = time_format.string_to_num(flist[i][1])
+                        flist[i] = flist[i][0], temp
+                    except:
+                        didfail = True
+                        break
+
+            if didfail:
+                flash("You did not format your times correctly!", "danger")
+                return render_template("editsplit.html", title=sq.name, split=sq, sdata=olist)
+
+            tflist = [f[1] for f in flist if f[1]]
+            if not all(tflist[i] <= tflist[i+1] for i in xrange(len(tflist)-1)):
+                flash("Times need to be in ascending order!", "danger")
+                return render_template("editsplit.html", title=sq.name, split=sq, sdata=olist)
+
+
             if not (sq.user.id == g.user.id):
                 sq = Split(dat["sname"], sq.game, g.user)
                 db.session.add(sq)
@@ -303,8 +349,10 @@ def split_edit(sid):
             flash("Success", "success")
             return redirect(url_for('split_page', sid=sq.id))
 
+
         sdata = sq.get_file_array()
         return render_template("editsplit.html", title=sq.name, split=sq, sdata=sdata)
+
     return render_template("errorpage.html", Title="Split not found",
                            mainMess="Split not found",
                            sideMess="Split not found.")
@@ -337,11 +385,22 @@ def get_race(rid):
     rq = Race.query.get(rid)
     if rq:
         ts = rq.split
+        if rq.finished:
+            return jsonify(id = rid, split=dict(id=ts.id, name=ts.name, splits=ts.file_to_dict()), results=rq.get_file_results())
         return jsonify(id=rid, split=dict(id=ts.id, name=ts.name, splits=ts.file_to_dict()))
     return "none", 404
 
 @app.route("/api/r/<int:rid>/results/", methods=["POST"])
 @apikey_req
 def post_race_results(rid):
-    dat = request.form["data"]
-    return dat
+    rq = Race.query.get(rid)
+    if rq:
+        if request.form.get("finished") == "yes":
+            rq.finished = True
+            db.session.commit()
+            return "Successfully finished race", 200
+        res = json.loads(request.form["res"])
+        rq.add_res(res)
+        return "Successfully posted results", 200
+    return "none", 404
+
