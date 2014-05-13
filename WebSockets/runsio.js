@@ -132,8 +132,8 @@ io.sockets.on("connection", function(socket){
             users[socket.id].times[users[socket.id].position] = tresp.current - tresp.start;
             users[socket.id].position++;
             recalculateUserPositions(room);
-            socket.emit("update timer", tresp);
-            socket.emit("update users", getUsersInRaceInOrder(room));
+            io.sockets.in(room).emit("update timer", tresp);
+            io.sockets.in(room).emit("update users", getUsersInRaceInOrder(room));
         }
     });
 
