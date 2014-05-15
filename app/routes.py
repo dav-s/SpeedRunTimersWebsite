@@ -167,13 +167,8 @@ def download():
 
 # Webclient Pages
 
-@app.route("/webclient/")
-def webclient():
-    return abort(404)
-
-
 @app.route("/webclient/<int:rid>/")
-def webclient_race(rid):
+def webclient(rid):
     if g.user is None or not g.user.is_authenticated():
         return render_template("errorpage.html", title="Please log in.",
                                mainMess="You need to be logged in to view this page.",
@@ -181,6 +176,10 @@ def webclient_race(rid):
     rq = Race.query.get(rid)
     if not rq:
         return abort(404)
+    if rq.finished:
+        return render_template("errorpage.html", title="This game has already finished",
+                               mainMess="This game has already ended.",
+                               sideMess="You could start a new game if you wanted to.")
     return render_template("webclient.html", title=rq.split.name, race=rq)
 
 # Game Pages
