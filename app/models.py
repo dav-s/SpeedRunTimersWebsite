@@ -1,7 +1,11 @@
 from app import db
-import json
 from werkzeug.security import generate_password_hash, check_password_hash
-import _md5, os, time_format, json
+import os, time_format, json
+
+try:
+    import md5
+except:
+    import _md5 as md5
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -21,7 +25,7 @@ class User(db.Model):
         return check_password_hash(self.password_hash, password)
 
     def get_md5_email(self):
-        return _md5.new(self.email).hexdigest()
+        return md5.new(self.email).hexdigest()
 
     def change_email(self, email):
         self.email = email.strip().lower()

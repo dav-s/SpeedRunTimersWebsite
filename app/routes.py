@@ -266,7 +266,7 @@ def create_race():
         race = Race(sq)
         db.session.add(sq)
         db.session.commit()
-        return redirect(url_for("webclient_race", rid=race.id))
+        return redirect(url_for("webclient", rid=race.id))
     return abort(404)
 
 
