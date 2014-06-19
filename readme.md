@@ -7,15 +7,15 @@ More information can be found on [this word document](https://github.com/EpicDav
 
 ####Python:
 * Python 2.7
-* Flask
-* Flask-SQLAlchemy
-* Flask-WTForms
-* Flask-Login
+* Flask (`pip install flask`)
+* Flask-SQLAlchemy (`pip install flask-sqlalchemy`)
+* Flask-WTForms (`pip install flask-wtf`)
+* Flask-Login (`pip install flask-login`)
 
 ####WebSockets:
 * Node.js
-* Socket.io 0.9
-* Requests
+* Socket.io 0.9 (`npm install socket.io`)
+* Request (`npm install request`)
 
 ####Web Stuffs:
 * Bootstrap
