@@ -56,14 +56,14 @@ def fot_page(e):
 def fof_page(e):
     return render_template("errorpage.html", title="Not Found, Bro!",
                            mainMess="This page doesn't exist!",
-                           sideMess="You might of typed in the wrong url, or just stupid."), 404
+                           sideMess="You might have typed in the wrong url or you are just stupid."), 404
 
 
 @app.errorhandler(500)
 def server_error_page(e):
     return render_template("errorpage.html", title="Whoops!",
                            mainMess="There was a server error!",
-                           sideMess="This is a problem on our part. We will attend to this shortly..."), 404
+                           sideMess="This is a problem on our part. We will attend to this shortly..."), 500
 
 
 def mod_cs_search(mod, modattr, term, fun=None):
