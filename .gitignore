@@ -1,5 +1,7 @@
 #SpeedRunTimers
 *.py[co]
+*.egg
+*.egg-info
 *.db
 .idea
 *.iml
