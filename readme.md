@@ -11,11 +11,10 @@ More information can be found on [this word document](https://github.com/EpicDav
 1. First clone the project: `git clone https://github.com/EpicDavi/SpeedRunTimersProject`.
 2. Run `setup.py install`.
 3. Install Node dependencies (I will be moving to a Python Websocket server, so soon this will not be neccessary).
-4. Run `runny.py` and `/WebSockets/runsio.js`.
-
-...
-
-5. Profit?
+4. Edit `config.py` to your liking.
+5. Run `createdb.py`. This creates the database.
+6. Run `runny.py` and `/WebSockets/runsio.js`.
+7. You should be up and running! Report any issues you have on this repo.
 
 
 ####Python:
